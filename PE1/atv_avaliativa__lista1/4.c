@@ -2,20 +2,20 @@
 
 void main(){
 
-  float n1 = readGrade(1);
-  float n2 = readGrade(2);
-  float n3 = readGrade(3);
-  float n4 = readGrade(4);
+  float n1;
+  printf("Digite a 1° nota: ");
+  scanf("%f", &n1);
+  float n2;
+  printf("Digite a 2° nota: ");
+  scanf("%f", &n2);
+  float n3;
+  printf("Digite a 3° nota: ");
+  scanf("%f", &n3);
+  float n4;
+  printf("Digite a 4° nota: ");
+  scanf("%f", &n4);
 
   float media = (n1*1 + n2*2 + n3*3 +n4*4)/10;
 
-  printf("Media: %.2f", media);
-
-}
-
-float readGrade(int grade_num){
-  float grade;
-  printf("Digite a %d° nota: ", grade_num);
-  scanf("%lf", grade);
-  return grade;
+  printf("Media: %.2f \n", media);
 }
