@@ -26,13 +26,13 @@ int main(){
   printf("Digite o tamanho do vetor: ");
   scanf("%d", &n);
 
-  float maior, menor;
   float* vetor = malloc(n * sizeof(float));
   for(int i = 0; i < n; i++){
     printf("Digite o valor %d: ", i);
     scanf("%f", &vetor[i]);
   }
 
+  float maior, menor;
   maiorEMenor(vetor, n, &maior, &menor);
 
   printf("Maior valor: %.2f \n", maior);

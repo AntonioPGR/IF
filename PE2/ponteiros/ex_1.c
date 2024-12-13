@@ -9,12 +9,13 @@ void idadeEmDias(int anos, int meses, int dias, int* resultado){
 
 int main(){
   
-  int anos, meses, dias, resultado;
+  int anos, meses, dias;
   scanf("%d %d %d", &anos, &meses, &dias);
 
-  idadeEmDias(anos, meses, dias, &resultado);
+  int* resultado = malloc(sizeof(int));
+  idadeEmDias(anos, meses, dias, resultado);
 
-  printf("A idade em dias e: %d\n", resultado);
+  printf("A idade em dias e: %d\n", *resultado);
 
   return 0;
 }
