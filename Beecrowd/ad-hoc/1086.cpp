@@ -4,6 +4,14 @@
 
 using namespace std;
 
+int calculateTabuas(int c, int l, vector<int> tabuas){
+  // tem c linhas com l de comprimento
+  int lines_count = 0;
+  for(int i = 0; i < tabuas.size(); i++){
+    // int biggest = 
+  }
+}
+
 int main(){
   int m, n;
   while(cin >> m >> n && n != 0){
@@ -22,11 +30,16 @@ int main(){
 
     int num_tabuas = 0;
     if(m%l_tabuas==0){
-      num_tabuas = calculateTabuas(m, n)
+      num_tabuas = calculateTabuas(m, n, tabuas);
     }
     if(n%l_tabuas==0){
-
+      int temp = calculateTabuas(n, m, tabuas);
+      if(temp < l_tabuas){
+        num_tabuas = temp;
+      }
     }
+
+    cout << num_tabuas << endl;
 
   }
 }
