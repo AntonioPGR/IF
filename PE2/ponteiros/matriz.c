@@ -8,9 +8,9 @@ int main(){
   int n;
   scanf("%d", &n);
 
-  int** matriz = malloc(n * sizeof(int*));
-  for(int i = 0; i < n; i++){
-    matriz[i] = malloc(n * sizeof(int));
+  int** matriz = malloc(n_linhas * sizeof(int*));
+  for(int i = 0; i < n_linhas; i++){
+    matriz[i] = malloc(n_colunas * sizeof(int));
   }
 
   for(int i = 0; i < n; i++){

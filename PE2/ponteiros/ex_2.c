@@ -27,6 +27,10 @@ int main(){
   scanf("%d", &n);
 
   float* vetor = malloc(n * sizeof(float));
+  if(vetor == NULL){
+    return 0;
+  }
+  
   for(int i = 0; i < n; i++){
     printf("Digite o valor %d: ", i);
     scanf("%f", &vetor[i]);
@@ -37,7 +41,6 @@ int main(){
 
   printf("Maior valor: %.2f \n", maior);
   printf("Menor valor: %.2f \n", menor);
-
 
   return 0;
 }

@@ -1,0 +1,30 @@
+Bola na rede
+
+Times
+Rodadas
+Partidas
+
+Campeonatos
+
+Inicio -
+Cadastrar Times
+Iniciar novo campeonato
+Ver Campeonatos
+
+Cadastrar Times -
+Nome
+
+Iniciar novo campeonato -
+Id dos Times
+Listar Times
+
+Ver campeonatos - 
+Selecionar campeonato -
+
+Selecionar campeonato - 
+Ver tabela
+Ver Rodadas
+Adicionar Partida
+
+Ver Rodadas - 
+Atualizar partida
