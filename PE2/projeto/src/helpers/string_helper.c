@@ -10,7 +10,7 @@ void cleanInputBuffer(){
 
 char* getInputLine(int max_size, char* label){
   char* name = (char *) malloc(max_size*sizeof(char));
-  printf(label);
+  printf("%s", label);
   cleanInputBuffer();
   fgets(name, max_size, stdin);
   name[strcspn(name, "\n")] = '\0';
@@ -58,6 +58,22 @@ char* findFirstOccurrenceOf(char *str, char c){
 
 int findFirstIndexOf(char *str, char c){
   return findFirstOccurrenceOf(str, c) - str;
+}
+
+char* findSubstring(char *str, char *sub){
+  char *pos = strstr(str, sub);
+  if(pos == NULL){
+    return NULL;
+  }
+  return pos;
+}
+
+int findSubstringIndex(char *str, char *sub){
+  char *pos = findSubstring(str, sub);
+  if(pos == NULL){
+    return -1;
+  }
+  return pos - str;
 }
 
 void cleanFirstCharacter(char *str){

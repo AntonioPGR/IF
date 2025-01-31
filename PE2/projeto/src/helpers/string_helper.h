@@ -15,3 +15,7 @@ char* findFirstOccurrenceOf(char *str, char c);
 int findFirstIndexOf(char *str, char c);
 
 void cleanFirstCharacter(char *str);
+
+int findSubstringIndex(char *str, char *sub);
+
+char* findSubstring(char *str, char *sub);

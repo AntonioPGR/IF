@@ -25,6 +25,7 @@ int main(){
     showHeader();
     showOptionMenu();
     scanf("%d", &op);
+    printf("\n");
     switch(op){
       case 1:
         registerTeam();
@@ -39,6 +40,7 @@ int main(){
         updateTeam();
         break;
     }
+    printf("\n");
   } while(op != 0);
 
   return 0;

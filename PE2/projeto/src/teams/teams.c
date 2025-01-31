@@ -7,6 +7,11 @@
 #define FILENAME "src/data/teams.txt"
 #define DEFAULT_ID 1001
 
+struct Team{
+  char* id;
+  char* name;
+};
+
 void registerTeam(){
   char *name = getInputLine(25, "Nome do time: ");
   char *teams = readFile(FILENAME);
@@ -32,14 +37,15 @@ void listTeams(){
     printf("SEM TIMES");
     return;
   }
+  printf("- ID -|- NOME ---------\n");
   char *token = strtok(teams, ";");
   while(token != NULL){
-    char *undescore = strchr(token, '_');
+    char *undescore = findFirstOccurrenceOf(token, '_');
     if(undescore != NULL){
       *undescore = '\0';
       char *id = token;
       char *name = undescore+1;
-      printf("ID: %s, Name: %s\n", id, name);
+      printf(" %s |  %s\n", id, name);
     }
     token = strtok(NULL, ";");
   }
@@ -47,55 +53,38 @@ void listTeams(){
 }
 
 void deleteTeam(){
-  char *team_id = getInputLine(5, "Id do time:");
-
+  char *team_id = getInputLine(5, "Id do time: ");
   char *teams = readFile(FILENAME);
-  char *position = strstr(teams, team_id);
-
-  if (position == NULL) {
-    printf("ID não encontrado.\n");
-    return;
-  } 
-
-  int index = position - teams;
-  char *substituition_start = teams + index;
-  char *next_semicolon = strchr(substituition_start, ';');
-  int end_index = next_semicolon - teams;
-  memmove(teams + index, teams + end_index + 1, strlen(teams));
+  char *id_start = findSubstring(teams, team_id);
+  char *id_end = findFirstOccurrenceOf(id_start, ';') + 1;
+  memmove(id_start, id_end, strlen(teams));
   writeInFile(FILENAME, teams);
-  teams[strlen(teams) - end_index + index - 1] = '\0';
-
   free(teams);
 }
 
 void updateTeam(){
   char *team_id = getInputLine(5, "Id do time: ");
-
   char *new_name = getInputLine(50, "Novo nome do time: ");
-
   char *teams = readFile(FILENAME);
   if(strlen(teams) == 0){
     printf("SEM TIMES");
     return;
   }
-
   char *token = strtok(teams, ";");
-  char buffer[1000] = "";
+  char *buffer = (char *) malloc(1000);
+  buffer = "";
   while(token != NULL){
-    char *undescore = strchr(token, '_');
+    char *undescore = findFirstOccurrenceOf(token, '_');
     if(undescore != NULL){
       *undescore = '\0';
       char *id = token;
       char *name = undescore+1;
-      strcat(buffer, id);
-      strcat(buffer, "_");
-      if(strcmp(id, team_id) == 0) strcat(buffer, new_name);
-      else strcat(buffer, name);
-      strcat(buffer, ";");
+      if(strcmp(id, team_id) == 0) name = new_name;
+      char *concat[] = {buffer, id, "_", name, ";", NULL};
+      buffer = concatStringArray(concat);
     }
     token = strtok(NULL, ";");
   }
   writeInFile(FILENAME, buffer);
   free(teams);
-
 }
