@@ -1,5 +1,10 @@
 
-void registerTeam();
+typedef struct Team{
+  char* id;
+  char* name;
+} Team;
+
+void createTeam();
 
 void listTeams();
 

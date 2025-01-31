@@ -7,15 +7,10 @@
 #define FILENAME "src/data/teams.txt"
 #define DEFAULT_ID 1001
 
-struct Team{
-  char* id;
-  char* name;
-};
-
-void registerTeam(){
+void createTeam(){
   char *name = getInputLine(25, "Nome do time: ");
   char *teams = readFile(FILENAME);
-  int new_id = 1001;
+  int new_id = DEFAULT_ID;
   int last_id_idx = findLastIndexOf(teams, '_') - 4;
   if(last_id_idx > 0){
     char last_id[4];

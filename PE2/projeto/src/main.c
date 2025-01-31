@@ -2,6 +2,7 @@
 #include <string.h>
 #include "./settings/settings.h"
 #include "./teams/teams.h"
+#include "./leagues/leagues.h"
 
 void showHeader(){
   int traces_amount = 40;
@@ -14,7 +15,7 @@ void showHeader(){
 }
 
 void showOptionMenu(){
-  printf("0 - Encerrar aplicação\n1 - Cadastrar time\n2 - Ver times cadastrados\n3 - Deletar time\n4 - Atualizar time\n");
+  printf("0 - Encerrar aplicação\n1 - Cadastrar time\n2 - Ver times cadastrados\n3 - Deletar time\n4 - Atualizar time\n5 - Criar Campeonato\n6 - Listar Campeonatos\n");
 }
 
 int main(){
@@ -28,7 +29,7 @@ int main(){
     printf("\n");
     switch(op){
       case 1:
-        registerTeam();
+        createTeam();
         break;
       case 2:
         listTeams();
@@ -38,6 +39,12 @@ int main(){
         break;
       case 4:
         updateTeam();
+        break;
+      case 5:
+        createLeague();
+        break;
+      case 6:
+        showLeagues();
         break;
     }
     printf("\n");
