@@ -14,11 +14,7 @@ void showHeader(){
 }
 
 void showOptionMenu(){
-  printf("0 - Encerrar aplicação\n");
-  printf("1 - Cadastrar time\n");
-  printf("2 - Ver times cadastrados\n");
-  printf("3 - Iniciar novo campeonato\n");
-  printf("4 - Ver campeonatos\n");
+  printf("0 - Encerrar aplicação\n1 - Cadastrar time\n2 - Ver times cadastrados\n3 - Deletar time\n4 - Atualizar time\n");
 }
 
 int main(){
@@ -34,13 +30,15 @@ int main(){
         registerTeam();
         break;
       case 2:
+        listTeams();
         break;
       case 3:
+        deleteTeam();
         break;
       case 4:
+        updateTeam();
         break;
     }
-
   } while(op != 0);
 
   return 0;
