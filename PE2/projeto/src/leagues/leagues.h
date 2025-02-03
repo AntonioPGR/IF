@@ -1,4 +1,3 @@
-
 typedef struct League{
   char* id;
   char* name;
@@ -8,10 +7,10 @@ typedef struct League{
 
 void createLeague();
 
-void updateLeague();
+// void updateLeague();
 
 void showLeagues();
 
-void showLeague();
+void showTeamsInLeague();
 
 void deleteLeague();

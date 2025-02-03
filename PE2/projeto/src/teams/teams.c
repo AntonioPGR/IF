@@ -7,26 +7,8 @@
 #define FILENAME "src/data/teams.txt"
 #define DEFAULT_ID 1001
 
-void createTeam(){
-  char *name = getInputLine(25, "Nome do time: ");
-  char *teams = readFile(FILENAME);
-  int new_id = DEFAULT_ID;
-  int last_id_idx = findLastIndexOf(teams, '_') - 4;
-  if(last_id_idx > 0){
-    char last_id[4];
-    strncpy(last_id, teams + last_id_idx, 4);
-    last_id[4] = '\0';
-    new_id = atoi(last_id) + 1;
-  }
-  char *new_id_str = integerToString(new_id);
-  char* concat[] = {teams, new_id_str, "_", name, ";", NULL};
-  teams = concatStringArray(concat);
-  cleanFirstCharacter(teams);
-  writeInFile(FILENAME, teams);
-  free(teams);
-}
-
 void listTeams(){
+  cleanScreen();
   char *teams = readFile(FILENAME);
   if(strlen(teams) == 0){
     printf("SEM TIMES");
@@ -45,19 +27,37 @@ void listTeams(){
     token = strtok(NULL, ";");
   }
   free(teams);
+  printf("\n");
+
+  cleanInputBuffer();
+  pressAnyKeyToContinue();
 }
 
-void deleteTeam(){
-  char *team_id = getInputLine(5, "Id do time: ");
+void createTeam(){
+  cleanScreen();
+  char *name = getInputLine(25, "Nome do time: ");
   char *teams = readFile(FILENAME);
-  char *id_start = findSubstring(teams, team_id);
-  char *id_end = findFirstOccurrenceOf(id_start, ';') + 1;
-  memmove(id_start, id_end, strlen(teams));
+  int new_id = DEFAULT_ID;
+  int last_id_idx = findLastIndexOf(teams, '_') - 4;
+  if(last_id_idx > 0){
+    char last_id[4];
+    strncpy(last_id, teams + last_id_idx, 4);
+    last_id[4] = '\0';
+    new_id = atoi(last_id) + 1;
+  }
+  char *new_id_str = integerToString(new_id);
+  char* concat[] = {teams, new_id_str, "_", name, ";", NULL};
+  teams = concatStringArray(concat);
+  cleanFirstCharacter(teams);
   writeInFile(FILENAME, teams);
   free(teams);
+
+  printf("\nO time foi cadastrado com sucesso!\n\n");
+  pressAnyKeyToContinue();
 }
 
 void updateTeam(){
+  cleanScreen();
   char *team_id = getInputLine(5, "Id do time: ");
   char *new_name = getInputLine(50, "Novo nome do time: ");
   char *teams = readFile(FILENAME);
@@ -82,4 +82,22 @@ void updateTeam(){
   }
   writeInFile(FILENAME, buffer);
   free(teams);
+
+  printf("\nO nome do time foi atualizado com sucesso!\n\n");
+  pressAnyKeyToContinue();
+}
+
+void deleteTeam(){
+  cleanScreen();
+  char *team_id = getInputLine(5, "Id do time: ");
+  char *teams = readFile(FILENAME);
+  char *id_start = findSubstring(teams, team_id);
+  char *id_end = findFirstOccurrenceOf(id_start, ';') + 1;
+  memmove(id_start, id_end, strlen(teams));
+  writeInFile(FILENAME, teams);
+  free(teams);
+
+  printf("\nO time foi deletado com sucesso!\n\n");
+  cleanInputBuffer();
+  pressAnyKeyToContinue();
 }

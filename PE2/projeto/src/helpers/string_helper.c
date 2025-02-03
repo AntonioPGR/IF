@@ -3,18 +3,22 @@
 #include <stdlib.h>
 #include <math.h>
 
+void cleanScreen(){
+  printf("\e[1;1H\e[2J");
+}
+
 void cleanInputBuffer(){
   int c;
   while((c = getchar()) != '\n' && c != EOF);
 }
 
 char* getInputLine(int max_size, char* label){
-  char* name = (char *) malloc(max_size*sizeof(char));
+  char* line = (char *) malloc(max_size*sizeof(char));
   printf("%s", label);
   cleanInputBuffer();
-  fgets(name, max_size, stdin);
-  name[strcspn(name, "\n")] = '\0';
-  return name;
+  fgets(line, max_size, stdin);
+  line[strcspn(line, "\n")] = '\0';
+  return line;
 }
 
 char* concatStringArray(char** elements) {
@@ -79,4 +83,9 @@ int findSubstringIndex(char *str, char *sub){
 void cleanFirstCharacter(char *str){
   if(str[0] == 2) memmove(str, str + 1, strlen(str));
   if(str[0] == -64) memmove(str, str + 1, strlen(str));
+}
+
+void pressAnyKeyToContinue(){
+  printf("Pressione qualquer tecla para continuar...");
+  getchar();
 }

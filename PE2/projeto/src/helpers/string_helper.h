@@ -19,3 +19,7 @@ void cleanFirstCharacter(char *str);
 int findSubstringIndex(char *str, char *sub);
 
 char* findSubstring(char *str, char *sub);
+
+void cleanScreen();
+
+void pressAnyKeyToContinue();
