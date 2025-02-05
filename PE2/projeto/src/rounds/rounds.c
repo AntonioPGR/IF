@@ -5,6 +5,7 @@
 #include "../leagues/leagues.h"
 #include "../helpers/string_helper.h"
 #include "../helpers/file_helper.h"
+#include "../teams/teams.h"
 
 #define FILENAME "src/data/rounds.txt"
 #define DEFAULT_ID 3001
@@ -58,6 +59,37 @@ void createRounds(League league) {
 }
 
 void showRounds(){
+  cleanScreen();
+
+  char* league_id = getInputLine(5, "Digite o ID do campeonato: ");
+  printf("\n");
+
+  char* data = readFile(FILENAME);
+  char* token = strtok(data, ";");
+  while (token != NULL){
+    char league_round_id[5];
+    strncpy(league_round_id, token + 5, 4);
+    league_round_id[4] = '\0';
+    int size = strlen(token);
+    if(strcmp(league_round_id, league_id) == 0){
+      char* rounds_str = token + 10;
+      char* round_str = strtok(rounds_str, ",");
+      while(round_str != NULL){
+        printf("%s\n", round_str);
+        printf("%d", round_str - rounds_str);
+        char home_team_id[5], score_home[2], visitor_team_id[5], score_visitor[2];
+        sscanf(round_str, "%[^#]#%[^#]#%[^#]#%s", home_team_id, score_home, visitor_team_id, score_visitor);
+        printf("| %s - %s x %s - %s |", home_team_id, score_home, score_visitor, visitor_team_id);
+        round_str = strtok(NULL, ",");
+      }
+      printf("\n");
+    }
+    token = strtok(token + size + 1, ";");
+  }
+  printf("\n");
+
+  cleanInputBuffer();
+  pressEnterToContinue();
 }
 
 

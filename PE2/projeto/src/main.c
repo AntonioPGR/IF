@@ -56,7 +56,7 @@ void showLeagueMenu(){
   do{
     showHeader("CAMPEONATOS");
     char* message = invalid_option ? "\nOPÇÃO INVALIDA!!! Selecione uma opção válida para continuar...\n" : "";
-    printf("0 - Voltar ao menu inicial\n1 - Ver campeonatos cadastrados\n2 - Ver times participantes de um campeonato\n3 - Cadastrar novo campeonato\n4 - Apagar campeonato\n%s\nEscolha uma opção: ", message);
+    printf("0 - Voltar ao menu inicial\n1 - Ver campeonatos cadastrados\n2 - Ver times participantes de um campeonato\n3 - Cadastrar novo campeonato\n4 - Apagar campeonato\n5 - Mostrar as rodadas de um campeonato\n%s\nEscolha uma opção: ", message);
     scanf("%d", &op);
     switch (op){
       case 0: 
@@ -69,11 +69,13 @@ void showLeagueMenu(){
         break;
       case 4: deleteLeague();
         break;
+      case 5: showRounds();
+        break;
       default:
         invalid_option = 1;
     }
     cleanScreen();
-  } while(op < 0 || op > 4);
+  } while(op < 0 || op > 5);
 }
 
 int main(){
@@ -89,9 +91,6 @@ int main(){
       case 1: showTeamsMenu();
         break;
       case 2: showLeagueMenu();
-        break;
-      case 3:
-        showRounds();
         break;
       default:
         invalid_option = 1;

@@ -11,3 +11,5 @@ void listTeams();
 void deleteTeam();
 
 void updateTeam();
+
+char* getTeamName(char* team_id);

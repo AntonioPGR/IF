@@ -96,3 +96,25 @@ void deleteTeam(){
   cleanInputBuffer();
   pressEnterToContinue();
 }
+
+char* getTeamName(char* team_id){
+  printf("ID: %s\n", team_id);
+  char* id = (char *) malloc(5);
+  strncpy(id, team_id, 4);
+  id[4] = '\0';
+
+  char *teams = readFile(FILENAME);
+  if(strlen(teams) == 0){
+    return NULL;
+  }
+
+  char *token = strtok(teams, ";");
+  int size = strlen(token) + 1;
+  while(token != NULL){
+    if(strncmp(token, team_id, 4) == 0){
+      return token + 5;
+    }
+    token = strtok(token + size, ";");
+  }  
+  return NULL;
+}
