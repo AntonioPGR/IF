@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "leagues.h"
+#include "string.h"
 #include "../teams/teams.h"
 #include "../helpers/string_helper.h"
 #include "../helpers/file_helper.h"
-#include "string.h"
+#include "../rounds/rounds.h"
 
 #define FILENAME "src/data/leagues.txt"
 #define DEFAULT_ID 2001
@@ -32,86 +33,61 @@ void showLeagues(){
   free(leagues);
   printf("\n");
   cleanInputBuffer();
-  pressAnyKeyToContinue();
+  pressEnterToContinue();
 }
 
 void showTeamsInLeague() {
-    cleanScreen();
-    char *league_id = getInputLine(5, "Id do campeonato: ");
-    char *leagues = readFile(FILENAME);
-    if (strlen(leagues) == 0) {
-        printf("SEM CAMPEONATOS");
-        return;
-    }
-    char *token = strtok(leagues, ";");
-    while (token != NULL) {
-      if (strncmp(token, league_id, strlen(league_id)) == 0) {
-        char *last_underscore = findLastOccurrenceOf(token, '_');
-        if (last_underscore != NULL) {
-          char *ids = last_underscore + 1;
-          char *ids_token = strtok(ids, ",");
-          while (ids_token != NULL) {
-            printf("ID do time: %s\n", ids_token);
-            ids_token = strtok(NULL, ",");
-          }
+  cleanScreen();
+  char *league_id = getInputLine(5, "Id do campeonato: ");
+  char *leagues = readFile(FILENAME);
+  if (strlen(leagues) == 0) {
+      printf("SEM CAMPEONATOS");
+      return;
+  }
+  char *token = strtok(leagues, ";");
+  while (token != NULL) {
+    if (strncmp(token, league_id, strlen(league_id)) == 0) {
+      char *last_underscore = findLastOccurrenceOf(token, '_');
+      if (last_underscore != NULL) {
+        char *ids = last_underscore + 1;
+        char *ids_token = strtok(ids, ",");
+        while (ids_token != NULL) {
+          printf("ID do time: %s\n", ids_token);
+          ids_token = strtok(NULL, ",");
         }
-        break; 
       }
-      token = strtok(NULL, ";");
+      break; 
     }
-    free(leagues);
-    free(league_id);
-    printf("\n");
-    cleanInputBuffer();
-    pressAnyKeyToContinue();
+    token = strtok(NULL, ";");
+  }
+  free(leagues);
+  free(league_id);
+  printf("\n");
+  cleanInputBuffer();
+  pressEnterToContinue();
 }
 
 void createLeague() {
   cleanScreen();
+  
   League NewLeague;
   NewLeague.name = getInputLine(25, "Nome do campeonato: ");
-  printf("Numero de times: ");
-  scanf("%d", &NewLeague.teams_amount);
-  char *leagues = readFile(FILENAME);
-  if (leagues == NULL) {
-    printf("Erro ao ler o arquivo de campeonatos.\n");
-    return;
-  }
-  int new_id = DEFAULT_ID;
-  int last_semicolon_idx = findLastIndexOf(leagues, ';');
-  if (last_semicolon_idx > 0) {
-    char *last_entry = leagues + last_semicolon_idx + 1;
-    char *underscore = findFirstOccurrenceOf(last_entry, '_');
-    if (underscore != NULL) {
-      char last_id[5];
-      strncpy(last_id, last_entry, underscore - last_entry);
-      last_id[4] = '\0'; 
-      new_id = atoi(last_id) + 1;
-    }
-  }
-  NewLeague.id = integerToString(new_id);
+  NewLeague.teams_amount = getInputNumber("Quantidade de times: ");
+
+  char *data = readFile(FILENAME);
+  NewLeague.id = getNextMainId(data, DEFAULT_ID);
+
   NewLeague.teams_ids = (char **) malloc(NewLeague.teams_amount * sizeof(char *));
-  if (NewLeague.teams_ids == NULL) {
-    printf("Erro ao alocar memória para os IDs dos times.\n");
-    free(leagues);
-    return;
-  }
   for (int i = 0; i < NewLeague.teams_amount; i++) {
     char prompt[50];
     sprintf(prompt, "Insira o id do %d time: ", i + 1);
     NewLeague.teams_ids[i] = getInputLine(5, prompt);
   }
+
+  createRounds(NewLeague);
+
   char *text = (char *) malloc(1000 * sizeof(char));
-  if (text == NULL) {
-    printf("Erro ao alocar memória para o texto.\n");
-    free(leagues);
-    for (int i = 0; i < NewLeague.teams_amount; i++) {
-      free(NewLeague.teams_ids[i]);
-    }
-    free(NewLeague.teams_ids);
-    return;
-  }
-  snprintf(text, 1000, "%s%s_%s_%d_", leagues, NewLeague.id, NewLeague.name, NewLeague.teams_amount);
+  snprintf(text, 1000, "%s%s_%s_%d_", data, NewLeague.id, NewLeague.name, NewLeague.teams_amount);
   for (int i = 0; i < NewLeague.teams_amount; i++) {
     strcat(text, NewLeague.teams_ids[i]);
     if (i < NewLeague.teams_amount - 1) {
@@ -119,17 +95,12 @@ void createLeague() {
     }
   }
   strcat(text, ";");
+  cleanFirstCharacter(text);
   writeInFile(FILENAME, text);
-  free(leagues);
-  free(NewLeague.name);
-  free(NewLeague.id);
-  for (int i = 0; i < NewLeague.teams_amount; i++) {
-    free(NewLeague.teams_ids[i]);
-  }
-  free(NewLeague.teams_ids);
-  free(text);
+
   printf("\nO campeonato foi cadastrado com sucesso!\n\n");
-  pressAnyKeyToContinue();
+  cleanInputBuffer();
+  pressEnterToContinue();
 }
 
 void deleteLeague() {
@@ -139,7 +110,7 @@ void deleteLeague() {
   if (strlen(leagues) == 0) {
     printf("Nenhum campeonato cadastrado.\n");
     free(league_id);
-    pressAnyKeyToContinue();
+    pressEnterToContinue();
     return;
   }
   char *leagues_copy = strdup(leagues);
@@ -170,5 +141,5 @@ void deleteLeague() {
   }
   free(league_id);
   free(leagues);
-  pressAnyKeyToContinue();
+  pressEnterToContinue();
 }

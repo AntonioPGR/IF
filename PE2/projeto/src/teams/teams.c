@@ -30,30 +30,24 @@ void listTeams(){
   printf("\n");
 
   cleanInputBuffer();
-  pressAnyKeyToContinue();
+  pressEnterToContinue();
 }
 
 void createTeam(){
   cleanScreen();
   char *name = getInputLine(25, "Nome do time: ");
-  char *teams = readFile(FILENAME);
-  int new_id = DEFAULT_ID;
-  int last_id_idx = findLastIndexOf(teams, '_') - 4;
-  if(last_id_idx > 0){
-    char last_id[4];
-    strncpy(last_id, teams + last_id_idx, 4);
-    last_id[4] = '\0';
-    new_id = atoi(last_id) + 1;
-  }
-  char *new_id_str = integerToString(new_id);
-  char* concat[] = {teams, new_id_str, "_", name, ";", NULL};
-  teams = concatStringArray(concat);
-  cleanFirstCharacter(teams);
-  writeInFile(FILENAME, teams);
-  free(teams);
+
+  char *text = readFile(FILENAME);
+  char *new_id = getNextMainId(text, DEFAULT_ID);
+
+  char* concat[] = {text, new_id, "_", name, ";", NULL};
+  text = concatStringArray(concat);
+  cleanFirstCharacter(text);
+  writeInFile(FILENAME, text);
+  free(text);
 
   printf("\nO time foi cadastrado com sucesso!\n\n");
-  pressAnyKeyToContinue();
+  pressEnterToContinue();
 }
 
 void updateTeam(){
@@ -84,11 +78,12 @@ void updateTeam(){
   free(teams);
 
   printf("\nO nome do time foi atualizado com sucesso!\n\n");
-  pressAnyKeyToContinue();
+  pressEnterToContinue();
 }
 
 void deleteTeam(){
   cleanScreen();
+
   char *team_id = getInputLine(5, "Id do time: ");
   char *teams = readFile(FILENAME);
   char *id_start = findSubstring(teams, team_id);
@@ -99,5 +94,5 @@ void deleteTeam(){
 
   printf("\nO time foi deletado com sucesso!\n\n");
   cleanInputBuffer();
-  pressAnyKeyToContinue();
+  pressEnterToContinue();
 }

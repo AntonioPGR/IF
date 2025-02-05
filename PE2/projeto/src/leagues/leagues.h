@@ -1,4 +1,6 @@
-typedef struct League{
+#pragma once
+
+typedef struct{
   char* id;
   char* name;
   int teams_amount;
@@ -6,8 +8,6 @@ typedef struct League{
 } League;
 
 void createLeague();
-
-// void updateLeague();
 
 void showLeagues();
 

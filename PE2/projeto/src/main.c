@@ -5,6 +5,7 @@
 #include "./helpers/string_helper.h"
 #include "./teams/teams.h"
 #include "./leagues/leagues.h"
+#include "./rounds/rounds.h"
 
 void showHeader(char* title){
   int traces_amount = 40;
@@ -88,6 +89,9 @@ int main(){
       case 1: showTeamsMenu();
         break;
       case 2: showLeagueMenu();
+        break;
+      case 3:
+        showRounds();
         break;
       default:
         invalid_option = 1;

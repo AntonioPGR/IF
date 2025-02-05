@@ -2,6 +2,8 @@ char* concatStringArray(char** elements);
 
 char* getInputLine(int max_size, char* label);
 
+int getInputNumber(char* label);
+
 void cleanInputBuffer();
 
 char* integerToString(int number);
@@ -22,4 +24,6 @@ char* findSubstring(char *str, char *sub);
 
 void cleanScreen();
 
-void pressAnyKeyToContinue();
+void pressEnterToContinue();
+
+char* getNextMainId(char *data, int default_id);

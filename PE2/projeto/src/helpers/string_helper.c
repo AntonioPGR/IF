@@ -21,6 +21,13 @@ char* getInputLine(int max_size, char* label){
   return line;
 }
 
+int getInputNumber(char* label){
+  int number;
+  printf("%s", label);
+  scanf("%d", &number);
+  return number;
+}
+
 char* concatStringArray(char** elements) {
   size_t total_length = 0;
   for (int i = 0; elements[i] != NULL; i++) {
@@ -85,7 +92,31 @@ void cleanFirstCharacter(char *str){
   if(str[0] == -64) memmove(str, str + 1, strlen(str));
 }
 
-void pressAnyKeyToContinue(){
-  printf("Pressione qualquer tecla para continuar...");
+void pressEnterToContinue(){
+  printf("Pressione ENTER para continuar...");
   getchar();
+}
+
+char* getNextMainId(char *data, int default_id){
+  char *data_copy = (char *) malloc(strlen(data));
+  strncpy(data_copy, data, strlen(data));
+  data_copy[strlen(data)] = '\0';
+
+  int id = default_id;
+  int last_semicolon_idx = findLastIndexOf(data_copy, ';');
+
+  if(last_semicolon_idx > 0){
+    data_copy[last_semicolon_idx] = '\0';
+    last_semicolon_idx = findLastIndexOf(data_copy, ';');
+
+    int sum = 0;
+    if(last_semicolon_idx > 0) sum = last_semicolon_idx + 1;
+
+    char last_id[4];
+    strncpy(last_id, data_copy + sum, 4);
+    last_id[4] = '\0';
+    id = atoi(last_id) + 1;
+  }
+  char* new_id = integerToString(id);
+  return new_id;
 }
