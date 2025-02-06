@@ -3,8 +3,8 @@
 #include "leagues.h"
 #include "string.h"
 #include "../teams/teams.h"
-#include "../helpers/string_helper.h"
-#include "../helpers/file_helper.h"
+#include "../helpers/string.h"
+#include "../helpers/text.h"
 #include "../rounds/rounds.h"
 
 #define FILENAME "src/data/leagues.txt"

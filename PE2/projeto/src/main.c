@@ -2,7 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "./settings/settings.h"
-#include "./helpers/string_helper.h"
+#include "./helpers/string.h"
 #include "./teams/teams.h"
 #include "./leagues/leagues.h"
 #include "./rounds/rounds.h"
