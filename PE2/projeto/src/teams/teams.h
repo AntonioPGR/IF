@@ -1,21 +1,25 @@
-typedef struct Team{
+#ifndef TEAMS_H
+#define TEAMS_H
+
+#define TEAMS_FILENAME "src/data/teams.bin"
+#define TEAMS_DEFAULT_ID 1000
+#define TEAMS_MAX 80
+#define TEAMS_NAME_LENGHT 25
+
+typedef struct{
   int id;
-  char name[25];
+  char name[TEAMS_NAME_LENGHT];
 } Team;
 
-typedef struct Teams{
+typedef struct{
   int teams_amount;
-  Team teams[30];
+  Team teams[TEAMS_MAX];
 } Teams;
 
 void createTeam();
-
 void listTeams();
-
 void deleteTeam();
-
 void updateTeam();
+char* getTeamName(int team_id);
 
-char* getTeamName(char* team_id);
-
-void readBinaryFile(const char *filename, void *buffer, size_t size);
+#endif

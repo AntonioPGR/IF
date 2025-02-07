@@ -1,128 +1,130 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "teams.h"
 #include "../helpers/string.h"
 #include "../helpers/binary.h"
-#include "../helpers/text.h"
-#include "teams.h"
 
-#define FILENAME "/src/data/teams.bin"
-#define DEFAULT_ID 1001
-
-void initializeFile(){
-  Teams teams;
-  teams.teams_amount = 0;
-  writeBynaryFile(FILENAME, &teams, sizeof(Teams));
-}
-
-void checkFileIsInitialized(){
-  Teams buffer;
-  readBinaryFile(FILENAME, &buffer, sizeof(Teams));
-  if(&buffer == NULL){
-    initializeFile();
+void checkFileIsInitialized() {
+  if (!doesFileExists(TEAMS_FILENAME)) {
+    Teams teams;
+    teams.teams_amount = 0;
+    writeBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
   }
 }
 
-void listTeams(){
+void listTeams() {
   cleanScreen();
-
   checkFileIsInitialized();
-
   Teams teams;
-  readBinaryFile(FILENAME, &teams, sizeof(Teams));
-
-  // printf("%d\n", teams.teams_amount);
-  // for(int i = 0; i < teams.teams_amount; i++){
-  //   printf("ID: %d\n", teams.teams[i].id);
-  //   printf("Nome: %s\n\n", teams.teams[i].name);
-  // }
-
+  readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
+  if(teams.teams_amount == 0){
+    printf("Sem times cadastrados\n");
+  } else {
+    printf("\n|- ID -|- NOME -------------------|\n");
+    for (int i = 0; i < teams.teams_amount; i++) {
+      printf("| %d | %-24s |\n", teams.teams[i].id, teams.teams[i].name);
+    }
+    printf("|------|--------------------------|\n\n");
+  }
   cleanInputBuffer();
   pressEnterToContinue();
 }
 
-void createTeam(){
+// TEAM SCAN NAME
+void createTeam() {
   cleanScreen();
+  checkFileIsInitialized();
 
   Teams teams;
-  readBinaryFile(FILENAME, &teams, sizeof(Teams));
+  readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
 
-  Team new_team;
-  if(teams.teams_amount == 0) new_team.id = DEFAULT_ID;
-  else new_team.id = teams.teams[teams.teams_amount - 1].id + 1;
-  printf("Nome do time: ");
-  scanf("%49s", new_team.name);
+  if (teams.teams_amount == TEAMS_MAX) {
+    printf("Limite de times cadastrados atingido\n");
+  } else {
+    Team new_team;
+    if (teams.teams_amount == 0) new_team.id = TEAMS_DEFAULT_ID;
+    else new_team.id = teams.teams[teams.teams_amount - 1].id + 1;
+    cleanInputBuffer();
+    printf("Nome do time: ");
+    fgets(new_team.name, 25, stdin);
+    new_team.name[strcspn(new_team.name, "\n")] = '\0';
+    teams.teams[teams.teams_amount] = new_team;
+    teams.teams_amount++;
+    writeBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
+    printf("\nO time foi cadastrado com sucesso!\n\n");
+  }
 
-  teams.teams_amount++;
-  teams.teams[teams.teams_amount - 1] = new_team;
-
-  writeBynaryFile(FILENAME, &new_team, sizeof(Team));
-
-  printf("\nO time foi cadastrado com sucesso!\n\n");
   pressEnterToContinue();
 }
 
+// NOT FOUND TEAM
+// TEAM SCAN NAME
 void updateTeam(){
   cleanScreen();
-  char *team_id = getInputLine(5, "Id do time: ");
-  char *new_name = getInputLine(50, "Novo nome do time: ");
-  char *teams = readFile(FILENAME);
-  if(strlen(teams) == 0){
-    printf("SEM TIMES");
-    return;
-  }
-  char *token = strtok(teams, ";");
-  char *buffer = (char *) malloc(1000);
-  buffer = "";
-  while(token != NULL){
-    char *undescore = findFirstOccurrenceOf(token, '_');
-    if(undescore != NULL){
-      *undescore = '\0';
-      char *id = token;
-      char *name = undescore+1;
-      if(strcmp(id, team_id) == 0) name = new_name;
-      char *concat[] = {buffer, id, "_", name, ";", NULL};
-      buffer = concatStringArray(concat);
+
+  Team new_team;
+  printf("Id do time: ");
+  scanf("%d", &new_team.id);
+  cleanInputBuffer();
+  printf("Nome do time: ");
+  fgets(new_team.name, 25, stdin);
+  new_team.name[strcspn(new_team.name, "\n")] = '\0';
+
+  Teams teams;
+  readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
+
+  for(int i = 0; i < teams.teams_amount; i++){
+    if(teams.teams[i].id == new_team.id){
+      strcpy(teams.teams[i].name, new_team.name);
+      break;
     }
-    token = strtok(NULL, ";");
   }
-  writeInFile(FILENAME, buffer);
-  free(teams);
+  
+  writeBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
 
   printf("\nO nome do time foi atualizado com sucesso!\n\n");
   pressEnterToContinue();
 }
 
+// NOT FOUND TEAM
 void deleteTeam(){
   cleanScreen();
 
-  char *team_id = getInputLine(5, "Id do time: ");
-  char *teams = readFile(FILENAME);
-  char *id_start = findSubstring(teams, team_id);
-  char *id_end = findFirstOccurrenceOf(id_start, ';') + 1;
-  memmove(id_start, id_end, strlen(teams));
-  writeInFile(FILENAME, teams);
-  free(teams);
+  int team_id;
+  printf("Id do time: ");
+  scanf("%d", &team_id);
+
+  Teams teams;
+  readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
+  for(int i = 0; i < teams.teams_amount; i++){
+    if(teams.teams[i].id == team_id){
+      for(int j = i; j < teams.teams_amount - 1; j++){
+        teams.teams[j] = teams.teams[j + 1];
+      }
+      teams.teams_amount--;
+      break;
+    }
+  }
+  writeBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
 
   printf("\nO time foi deletado com sucesso!\n\n");
   cleanInputBuffer();
   pressEnterToContinue();
 }
 
-char* getTeamName(char* team_id){
-  char* teams = readFile(FILENAME);
-  if (teams == NULL || strlen(teams) == 0) return NULL;
+char* getTeamName(int team_id){
+  Teams teams;
+  readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
 
-  char* teams_copy = strdup(teams);  // Copy before modifying
-  char* token = strtok(teams_copy, ";");
-  while(token != NULL){
-    if(strncmp(token, team_id, 4) == 0){
-      char* team_name = strdup(token + 5);  // Copy team name before returning
-      free(teams_copy);
-      return team_name;
+  for(int i = 0; i < teams.teams_amount; i++){
+    if(teams.teams[i].id == team_id){
+      char *name = (char *) malloc(25 * sizeof(char));
+      if(name == NULL) return NULL;
+      strcpy(name, teams.teams[i].name);
+      return name;
     }
-    token = strtok(NULL, ";");
   }
-  free(teams_copy);
+
   return NULL;
 }
