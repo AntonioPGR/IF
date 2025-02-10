@@ -3,34 +3,24 @@
 #include "leagues.h"
 #include "string.h"
 #include "../teams/teams.h"
-#include "../helpers/string.h"
+#include "../helpers/binary.h"
 #include "../helpers/text.h"
+#include "../helpers/string.h"
 #include "../rounds/rounds.h"
 
 void showLeagues(){
-  // cleanScreen();
-  // char *leagues = readFile(FILENAME);
-  // if(strlen(leagues) == 0){
-  //   printf("SEM CAMPEONATOS");
-  //   return;
-  // }
-  // printf("- ID -|- NOME ---------\n");
-  // char* token = strtok(leagues, ";");
-  // while(token != NULL){
-  //   char *name_start = findFirstOccurrenceOf(token, '_');
-  //   if(name_start != NULL){
-  //     *name_start = '\0';
-  //     char *name = name_start + 1;
-  //     int name_end = findFirstIndexOf(name, '_');
-  //     name[name_end] = '\0';
-  //     printf(" %s |  %s\n", token, name);
-  //   }
-  //   token = strtok(NULL, ";");
-  // }
-  // free(leagues);
-  // printf("\n");
-  // cleanInputBuffer();
-  // pressEnterToContinue();
+  cleanScreen();
+  
+  Leagues leagues;
+  readBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
+
+  for(int i = 0; i < leagues.leagues_amount; i++){
+    printf("ID: %s\n", leagues.leagues[i].name);
+  }
+
+  printf("\n");
+  cleanInputBuffer();
+  pressEnterToContinue();
 }
 
 void showTeamsInLeague() {
@@ -67,6 +57,16 @@ void showTeamsInLeague() {
 void createLeague() {
   cleanScreen();
   
+  Leagues leagues;
+  leagues.leagues_amount = 0;
+  readBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
+  if(leagues.leagues_amount >= LEAGUES_MAX){
+    printf("Número máximo de campeonatos atingido\n");
+    cleanInputBuffer();
+    pressEnterToContinue();
+    return;
+  }
+  
   League new_league;
   printf("Nome do campeonato: ");
   scanf("%24s", new_league.name);
@@ -85,7 +85,7 @@ void createLeague() {
     printf("ID do time %d: ", i + 1);
     int temp;
     scanf("%d", &temp);
-    if(!doesTeamExists(temp)){
+    if(!getTeamName(temp)){
       printf("Time não encontrado\n");
       i--;
       continue;
@@ -102,8 +102,20 @@ void createLeague() {
       rounds[i].games[j].id = GAMES_DEFAULT_ID + j;
       rounds[i].games[j].home_score = -1;
       rounds[i].games[j].visitor_score = -1;
+      strcpy(rounds[i].games[j].home_name, "Corinthians");
+      strcpy(rounds[i].games[j].visitor_name, "Palmeiras");
+      int temp = new_league.teams_ids[new_league.teams_amount - 1];
+      for (int k = new_league.teams_amount - 1; k > 1; k--) {
+        new_league.teams_ids[k] = new_league.teams_ids[k - 1];
+      }
+      new_league.teams_ids[1] = temp;
     }
   }
+  memcpy(new_league.rounds, rounds, sizeof(rounds));
+
+  leagues.leagues[leagues.leagues_amount] = new_league;
+
+  writeBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
 
   printf("\nO campeonato foi cadastrado com sucesso!\n\n");
   cleanInputBuffer();

@@ -3,7 +3,7 @@
 
 #include "../teams/teams.h" 
 
-#define LEAGUES_FILENAME "src/data/leagues.txt"
+#define LEAGUES_FILENAME "src/data/leagues.bin"
 #define LEAGUES_DEFAULT_ID 2000
 #define LEAGUES_MAX 10
 #define LEAGUES_MAX_TEAMS 26

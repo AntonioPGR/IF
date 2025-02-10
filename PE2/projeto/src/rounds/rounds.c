@@ -26,6 +26,7 @@ void createRounds(League league) {
   // for (int i = 0; i < rounds_amount; i++) {
   //   leagueRounds.rounds[i] = (Round *) malloc(games_per_round * sizeof(Round));
   // }
+  
   // for (int i = 0; i < rounds_amount; i++) {
   //   for (int j = 0; j < games_per_round; j++) {
   //     leagueRounds.rounds[i][j].id_home = league.teams_ids[j];
@@ -39,6 +40,7 @@ void createRounds(League league) {
   //   }
   //   league.teams_ids[1] = temp;
   // }
+
   // char* text = (char *) malloc(1000 * sizeof(char));
   // snprintf(text, 1000, "%s", data);
   // for(int i = 0; i < (league.teams_amount - 1); i++){
