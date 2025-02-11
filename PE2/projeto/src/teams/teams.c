@@ -5,7 +5,7 @@
 #include "../helpers/string.h"
 #include "../helpers/binary.h"
 
-void checkFileIsInitialized() {
+void checkTeamsFileIsInitialized() {
   if (!doesFileExists(TEAMS_FILENAME)) {
     Teams teams;
     teams.teams_amount = 0;
@@ -15,7 +15,7 @@ void checkFileIsInitialized() {
 
 void listTeams() {
   cleanScreen();
-  checkFileIsInitialized();
+  checkTeamsFileIsInitialized();
   Teams teams;
   readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
   if(teams.teams_amount == 0){
@@ -34,7 +34,7 @@ void listTeams() {
 // TEAM SCAN NAME
 void createTeam() {
   cleanScreen();
-  checkFileIsInitialized();
+  checkTeamsFileIsInitialized();
 
   Teams teams;
   readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
@@ -103,28 +103,38 @@ void deleteTeam(){
         teams.teams[j] = teams.teams[j + 1];
       }
       teams.teams_amount--;
-      break;
+      writeBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
+      printf("\nO time foi deletado com sucesso!\n\n");
+      cleanInputBuffer();
+      pressEnterToContinue();
+      return;
     }
   }
-  writeBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
 
-  printf("\nO time foi deletado com sucesso!\n\n");
+  printf("\nTime não encontrado!\n\n");
   cleanInputBuffer();
   pressEnterToContinue();
 }
 
-char* getTeamName(int team_id){
+int doesTeamExists(int team_id){
   Teams teams;
   readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
 
   for(int i = 0; i < teams.teams_amount; i++){
     if(teams.teams[i].id == team_id){
-      char *name = (char *) malloc(25 * sizeof(char));
-      if(name == NULL) return NULL;
-      strcpy(name, teams.teams[i].name);
-      return name;
+      return 1;
     }
   }
+  return 0;
+}
 
-  return NULL;
+Team getTeam(int team_id){
+  Teams teams;
+  readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
+
+  for(int i = 0; i < teams.teams_amount; i++){
+    if(teams.teams[i].id == team_id){
+      return teams.teams[i];
+    }
+  }
 }

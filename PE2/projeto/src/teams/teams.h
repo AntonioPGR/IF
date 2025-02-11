@@ -20,6 +20,8 @@ void createTeam();
 void listTeams();
 void deleteTeam();
 void updateTeam();
-char* getTeamName(int team_id);
+
+int doesTeamExists(int team_id);
+Team getTeam(int team_id);
 
 #endif

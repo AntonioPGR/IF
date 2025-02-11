@@ -16,14 +16,15 @@
 
 typedef struct{
   int id;
-  char home_name[25];
+  int home_id;
   int home_score;
-  char visitor_name[25];
+  int visitor_id;
   int visitor_score;
 } Game;
 
 typedef struct {
   int id;
+  int games_amount;
   Game games[LEAGUES_MAX_TEAMS/2];
 } Round;
 
@@ -45,5 +46,6 @@ void createLeague();
 void showLeagues();
 void showTeamsInLeague();
 void deleteLeague();
+void showLeagueGames();
 
 #endif

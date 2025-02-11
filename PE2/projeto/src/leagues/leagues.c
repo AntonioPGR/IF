@@ -6,59 +6,85 @@
 #include "../helpers/binary.h"
 #include "../helpers/text.h"
 #include "../helpers/string.h"
-#include "../rounds/rounds.h"
+
+void checkLeaguesFileIsInitialized(){
+  if (!doesFileExists(LEAGUES_FILENAME)) {
+    Leagues leagues;
+    leagues.leagues_amount = 0;
+    writeBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
+  }
+}
 
 void showLeagues(){
   cleanScreen();
+  checkLeaguesFileIsInitialized();
   
   Leagues leagues;
   readBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
 
-  for(int i = 0; i < leagues.leagues_amount; i++){
-    printf("ID: %s\n", leagues.leagues[i].name);
+  if(leagues.leagues_amount == 0){
+    printf("SEM CAMPEONATOS\n");
+  } else {
+    printf("\n|- ID -|- NOME -------------------|- TIMES -|\n");
+    for (int i = 0; i < leagues.leagues_amount; i++) {
+      League league = leagues.leagues[i];
+      printf("| %d | %-24s | %2d      |\n", league.id, league.name, league.teams_amount);
+    }
+    printf("|------|--------------------------|---------|\n\n");
   }
 
-  printf("\n");
   cleanInputBuffer();
   pressEnterToContinue();
 }
 
 void showTeamsInLeague() {
-  // cleanScreen();
-  // char *league_id = getInputLine(5, "Id do campeonato: ");
-  // char *leagues = readFile(FILENAME);
-  // if (strlen(leagues) == 0) {
-  //     printf("SEM CAMPEONATOS");
-  //     return;
-  // }
-  // char *token = strtok(leagues, ";");
-  // while (token != NULL) {
-  //   if (strncmp(token, league_id, strlen(league_id)) == 0) {
-  //     char *last_underscore = findLastOccurrenceOf(token, '_');
-  //     if (last_underscore != NULL) {
-  //       char *ids = last_underscore + 1;
-  //       char *ids_token = strtok(ids, ",");
-  //       while (ids_token != NULL) {
-  //         printf("ID do time: %s\n", ids_token);
-  //         ids_token = strtok(NULL, ",");
-  //       }
-  //     }
-  //     break; 
-  //   }
-  //   token = strtok(NULL, ";");
-  // }
-  // free(leagues);
-  // free(league_id);
-  // printf("\n");
-  // cleanInputBuffer();
-  // pressEnterToContinue();
+  cleanScreen();
+  checkLeaguesFileIsInitialized();
+  
+  Leagues leagues;
+  readBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
+
+  if(leagues.leagues_amount == 0){
+    printf("SEM CAMPEONATOS\n");
+    cleanInputBuffer();
+    pressEnterToContinue();
+    return;
+  }
+
+  League league;
+  int found = 0;
+  do{
+    int league_id;
+    printf("ID do campeonato: ");
+    scanf("%d", &league.id);
+    for(int i = 0; i < leagues.leagues_amount; i++){
+      if(leagues.leagues[i].id == league.id){
+        league = leagues.leagues[i];
+        found = 1;
+        break;
+      }
+    }
+  } while (!found);
+
+  printf("|---------------------------------|\n");
+  printf("| %-31s |\n", league.name);
+  printf("|---------------------------------|\n");
+  printf("|- ID -|- NOME -------------------|\n");
+  for (int i = 0; i < league.teams_amount; i++) {
+    Team team = getTeam(league.teams_ids[i]);
+    printf("| %d | %-24s |\n", team.id, team.name);
+  }
+  printf("|------|--------------------------|\n\n");
+
+  cleanInputBuffer();
+  pressEnterToContinue();
 }
 
 void createLeague() {
   cleanScreen();
+  checkLeaguesFileIsInitialized();
   
   Leagues leagues;
-  leagues.leagues_amount = 0;
   readBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
   if(leagues.leagues_amount >= LEAGUES_MAX){
     printf("Número máximo de campeonatos atingido\n");
@@ -68,8 +94,10 @@ void createLeague() {
   }
   
   League new_league;
+  cleanInputBuffer();
   printf("Nome do campeonato: ");
-  scanf("%24s", new_league.name);
+  fgets(new_league.name, 25, stdin);
+  new_league.name[strcspn(new_league.name, "\n")] = '\0';
 
   new_league.teams_amount = 0;
   while(
@@ -80,12 +108,14 @@ void createLeague() {
     printf("Quantidade de times (N par de 2 a 26): ");
     scanf("%d", &new_league.teams_amount);
   }
+  new_league.rounds_amount = new_league.teams_amount - 1;
+  new_league.id = LEAGUES_DEFAULT_ID + leagues.leagues_amount;
 
   for (int i = 0; i < new_league.teams_amount; i++) {
     printf("ID do time %d: ", i + 1);
     int temp;
     scanf("%d", &temp);
-    if(!getTeamName(temp)){
+    if(!doesTeamExists(temp)){
       printf("Time não encontrado\n");
       i--;
       continue;
@@ -93,27 +123,30 @@ void createLeague() {
     new_league.teams_ids[i] = temp;
   }
 
-  new_league.rounds_amount = new_league.teams_amount - 1;
-
-  Round rounds[new_league.rounds_amount];
-  for (int i = 0; i < new_league.rounds_amount; i++) {
-    rounds[i].id = ROUNDS_DEFAULT_ID + i;
-    for (int j = 0; j < new_league.teams_amount / 2; j++) {
-      rounds[i].games[j].id = GAMES_DEFAULT_ID + j;
-      rounds[i].games[j].home_score = -1;
-      rounds[i].games[j].visitor_score = -1;
-      strcpy(rounds[i].games[j].home_name, "Corinthians");
-      strcpy(rounds[i].games[j].visitor_name, "Palmeiras");
-      int temp = new_league.teams_ids[new_league.teams_amount - 1];
-      for (int k = new_league.teams_amount - 1; k > 1; k--) {
-        new_league.teams_ids[k] = new_league.teams_ids[k - 1];
-      }
-      new_league.teams_ids[1] = temp;
-    }
+  int teams_ids[new_league.teams_amount];
+  for(int i = 0; i < new_league.teams_amount; i++){
+    teams_ids[i] = new_league.teams_ids[i];
   }
-  memcpy(new_league.rounds, rounds, sizeof(rounds));
+
+  for(int i = 0; i < new_league.rounds_amount; i++){
+    new_league.rounds[i].id = ROUNDS_DEFAULT_ID + i;
+    new_league.rounds[i].games_amount = new_league.teams_amount / 2;
+    for(int j = 0; j < new_league.rounds[i].games_amount; j++){
+      new_league.rounds[i].games[j].id = GAMES_DEFAULT_ID + j;
+      new_league.rounds[i].games[j].home_score = -1;
+      new_league.rounds[i].games[j].home_id = teams_ids[j];
+      new_league.rounds[i].games[j].visitor_score = -1;
+      new_league.rounds[i].games[j].visitor_id = teams_ids[new_league.teams_amount - 1 - j];
+    }
+    int temp = teams_ids[new_league.teams_amount - 1];
+    for (int k = new_league.teams_amount - 1; k > 1; k--) {
+      teams_ids[k] = new_league.teams_ids[k - 1];
+    }
+    teams_ids[1] = temp;
+  }
 
   leagues.leagues[leagues.leagues_amount] = new_league;
+  leagues.leagues_amount++;
 
   writeBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
 
@@ -123,42 +156,88 @@ void createLeague() {
 }
 
 void deleteLeague() {
-  // cleanScreen();
-  // char *league_id = getInputLine(5, "Insira o ID do campeonato a ser deletado: ");
-  // char *leagues = readFile(FILENAME);
-  // if (strlen(leagues) == 0) {
-  //   printf("Nenhum campeonato cadastrado.\n");
-  //   free(league_id);
-  //   pressEnterToContinue();
-  //   return;
-  // }
-  // char *leagues_copy = strdup(leagues);
-  // char *token = strtok(leagues_copy, ";");
-  // char updated_leagues[1000] = "";
-  // int league_found = 0;
-  // while (token != NULL) {
-  //   char *underscore = findFirstOccurrenceOf(token, '_');
-  //   if (underscore != NULL) {
-  //     char current_id[5];
-  //     strncpy(current_id, token, underscore - token);
-  //     current_id[underscore - token] = '\0';
-  //     if (strcmp(current_id, league_id) == 0) {
-  //       league_found = 1;
-  //       printf("Campeonato com ID %s deletado.\n", league_id);
-  //     } else {
-  //       strcat(updated_leagues, token);
-  //       strcat(updated_leagues, ";");
-  //     }
-  //   }
-  //   token = strtok(NULL, ";");
-  // }
-  // free(leagues_copy);
-  // if (!league_found) {
-  //   printf("Campeonato com ID %s não encontrado.\n", league_id);
-  // } else {
-  //   writeInFile(FILENAME, updated_leagues);
-  // }
-  // free(league_id);
-  // free(leagues);
-  // pressEnterToContinue();
+  cleanScreen();
+  checkLeaguesFileIsInitialized();
+  
+  Leagues leagues;
+  readBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
+
+  if(leagues.leagues_amount == 0){
+    printf("SEM CAMPEONATOS\n");
+    cleanInputBuffer();
+    pressEnterToContinue();
+    return;
+  }
+
+  int league_id;
+  printf("ID do campeonato: ");
+  scanf("%d", &league_id);
+
+  for(int i = 0; i < leagues.leagues_amount; i++){
+    if(leagues.leagues[i].id == league_id){
+      for(int j = i; j < leagues.leagues_amount - 1; j++){
+        leagues.leagues[j] = leagues.leagues[j + 1];
+      }
+      leagues.leagues_amount--;
+      writeBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
+      printf("\nO campeonato foi deletado com sucesso!\n\n");
+      cleanInputBuffer();
+      pressEnterToContinue();
+      return;
+    }
+  }
+
+  printf("Campeonato não encontrado\n");
+  cleanInputBuffer();
+  pressEnterToContinue();
+}
+
+void showLeagueGames(){
+  cleanScreen();
+  checkLeaguesFileIsInitialized();
+  
+  Leagues leagues;
+  readBinaryFile(LEAGUES_FILENAME, &leagues, sizeof(Leagues));
+
+  if(leagues.leagues_amount == 0){
+    printf("SEM CAMPEONATOS\n");
+    cleanInputBuffer();
+    pressEnterToContinue();
+    return;
+  }
+
+  League league;
+  int found = 0;
+  do{
+    int league_id;
+    printf("ID do campeonato: ");
+    scanf("%d", &league.id);
+    for(int i = 0; i < leagues.leagues_amount; i++){
+      if(leagues.leagues[i].id == league.id){
+        league = leagues.leagues[i];
+        found = 1;
+        break;
+      }
+    }
+  } while (!found);
+
+  printf("|----------------------------------------------------------------------------------|\n");
+  printf("| %-80s |\n", league.name);
+  printf("|----------------------------------------------------------------------------------|\n");
+  printf("|- RODADA -|- ID -|- CASA -------------------|- VISITANTE --------------|- PLACAR -|\n");
+  for(int i = 0; i < league.rounds_amount; i++){
+    Round round = league.rounds[i];
+    for(int j = 0; j < round.games_amount; j++){
+      Game game = round.games[j];
+      Team home_team = getTeam(game.home_id);
+      Team visitor_team = getTeam(game.visitor_id);
+      printf("|   %d   | %d | %-24s | %-24s |", round.id, game.id, home_team.name, visitor_team.name);
+      if(game.home_score == -1) printf(" XX vs XX |\n");
+      else printf(" %2d vs %2d |\n", game.home_score, game.visitor_score);
+    }
+    printf("|----------------------------------------------------------------------------------|\n");
+  }
+
+  cleanInputBuffer();
+  pressEnterToContinue();
 }
