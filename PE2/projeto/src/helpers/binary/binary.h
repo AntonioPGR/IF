@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 int doesFileExists(char* FILENAME);
 
 void readBinaryFile(const char *filename, void *buffer, size_t size);

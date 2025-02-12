@@ -2,7 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "./settings/settings.h"
-#include "./helpers/string.h"
+#include "./helpers/terminal/terminal.h"
 #include "./teams/teams.h"
 #include "./leagues/leagues.h"
 
@@ -55,7 +55,7 @@ void showLeagueMenu(){
   do{
     showHeader("CAMPEONATOS");
     char* message = invalid_option ? "\nOPÇÃO INVALIDA!!! Selecione uma opção válida para continuar...\n" : "";
-    printf("0 - Voltar ao menu inicial\n1 - Ver campeonatos cadastrados\n2 - Ver times participantes de um campeonato\n3 - Cadastrar novo campeonato\n4 - Apagar campeonato\n5 - Mostrar as rodadas de um campeonato\n%s\nEscolha uma opção: ", message);
+    printf("0 - Voltar ao menu inicial\n1 - Ver campeonatos cadastrados\n2 - Ver times participantes de um campeonato\n3 - Cadastrar novo campeonato\n4 - Apagar campeonato\n5 - Mostrar as rodadas de um campeonato\n6 - Iniciar rodada de campeonato\n7 - Mostrar tabela\n%s\nEscolha uma opção: ", message);
     scanf("%d", &op);
     switch (op){
       case 0: 
@@ -70,11 +70,15 @@ void showLeagueMenu(){
         break;
       case 5: showLeagueGames();
         break;
+      case 6: startRound();
+        break;
+      case 7: showTable();
+        break;
       default:
         invalid_option = 1;
     }
     cleanScreen();
-  } while(op < 0 || op > 5);
+  } while(op < 0 || op > 7);
 }
 
 int main(){
@@ -84,6 +88,7 @@ int main(){
     showHeader("");
     showMainOptionMenu(invalid_option);
     scanf("%d", &op);
+    invalid_option = 0;
     switch (op){
       case 0: 
         break;

@@ -2,8 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "teams.h"
-#include "../helpers/string.h"
-#include "../helpers/binary.h"
+#include "../helpers/terminal/terminal.h"
+#include "../helpers/binary/binary.h"
 
 void checkTeamsFileIsInitialized() {
   if (!doesFileExists(TEAMS_FILENAME)) {

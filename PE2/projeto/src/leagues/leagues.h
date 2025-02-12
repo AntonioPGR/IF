@@ -14,6 +14,18 @@
 
 #define GAMES_DEFAULT_ID 4000
 
+typedef struct {
+  int team_id;
+  int points;
+  int goals_pro;
+  int goals_against;
+  int goals_difference;
+  int games_played;
+  int wins;
+  int draws;
+  int losses;
+} TeamPontuation;
+
 typedef struct{
   int id;
   int home_id;
@@ -47,5 +59,7 @@ void showLeagues();
 void showTeamsInLeague();
 void deleteLeague();
 void showLeagueGames();
+void startRound();
+void showTable();
 
 #endif
