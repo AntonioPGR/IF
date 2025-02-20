@@ -83,6 +83,7 @@ void showLeagueMenu(){
 
 int main(){
   loadSettings();
+  cleanScreen();
   int op, invalid_option = 0;
   do{
     showHeader("");

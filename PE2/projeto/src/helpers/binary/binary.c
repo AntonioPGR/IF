@@ -40,3 +40,14 @@ void readBinaryFile(const char *FILENAME, void *buffer, size_t size) {
   fread(buffer, size, 1, file);
   fclose(file);
 }
+
+void sizeOfFile(const char *FILENAME, size_t *size) {
+  FILE *file = fopen(FILENAME, "rb");
+  if (file == NULL) {
+    *size = 0;
+    return;
+  }
+  fseek(file, 0, SEEK_END);
+  *size = ftell(file);
+  fclose(file);
+}
