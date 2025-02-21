@@ -41,13 +41,13 @@ void readBinaryFile(const char *FILENAME, void *buffer, size_t size) {
   fclose(file);
 }
 
-void sizeOfFile(const char *FILENAME, size_t *size) {
-  FILE *file = fopen(FILENAME, "rb");
-  if (file == NULL) {
-    *size = 0;
-    return;
-  }
-  fseek(file, 0, SEEK_END);
-  *size = ftell(file);
-  fclose(file);
+long sizeOfBinaryFile(FILE *file) {
+    fseek(file, 0, SEEK_END);
+    long size = ftell(file);
+    rewind(file); 
+    return size;
+}
+
+int getAmountInBinaryFile(FILE *file, int size) {
+  return sizeOfBinaryFile(file) / size;
 }

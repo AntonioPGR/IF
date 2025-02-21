@@ -5,138 +5,179 @@
 #include "../helpers/terminal/terminal.h"
 #include "../helpers/binary/binary.h"
 
-void checkTeamsFileIsInitialized() {
-  // if (!doesFileExists(TEAMS_FILENAME)) {
-  //   writeBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
-  // }
+// SUPORT
+void getTeamName(char* label, char* input){
+  cleanInputBuffer();
+  printf("%s", label);
+  fgets(input, TEAMS_NAME_LENGHT, stdin);
+  if(input[strlen(input) - 1] == '\n') input[strlen(input) - 1] = '\0';
 }
 
+int doesFileOpen(FILE **file, const char* operation ) {
+  *file = fopen(TEAMS_FILENAME, operation);
+  if (*file == NULL) {
+    printf("Erro ao abrir o arquivo.\n");
+    pressEnterToContinue();
+    return 0;
+  }
+  return 1;
+}
+
+int isFileEmpty(FILE *file) {
+  int amount = getAmountInBinaryFile(file, sizeof(Team));
+  if (amount == 0) {
+    printf("Nenhum time cadastrado!\n\n");
+    cleanBufferNContinue();
+    return 1;
+  }
+  return 0;
+}
+
+
+// APP FUNCTIONS
 void listTeams() {
   cleanScreen();
-  checkTeamsFileIsInitialized();
 
-  FILE *file = fopen(TEAMS_FILENAME, "rb");
-  if (file == NULL) {
-    return;
-  }
-  
+  FILE *file;
+  if (!doesFileOpen(&file, "rb")) return;
+  if (isFileEmpty(file)) { fclose(file); return; }
+
   Team team;
   printf("|---------------------------------|\n");
   printf("| %-32s|\n", "TIMES CADASTRADOS");
   printf("|---------------------------------|\n");
   printf("|- ID -|- NOME -------------------|\n");
-  while(fread(&team, sizeof(Team), 1, file) == 1){
+  while (fread(&team, sizeof(Team), 1, file) == 1) {
     printf("| %d | %-24s |\n", team.id, team.name);
   }
   printf("|------|--------------------------|\n\n");
 
-  cleanInputBuffer();
-  pressEnterToContinue();
+  fclose(file);
+  cleanBufferNContinue();
 }
 
-// TEAM SCAN NAME
+
 void createTeam() {
   cleanScreen();
-  checkTeamsFileIsInitialized();
 
-  FILE *file = fopen(TEAMS_FILENAME, "ab");
-
-  if (file == NULL) {
-    return;
-  }
-
-  fseek(file, 0, SEEK_END);
-  long size = ftell(file) / sizeof(Team);
+  FILE *file;
+  if(!doesFileOpen(&file, "ab+")) return;
 
   Team new_team;
-  cleanInputBuffer();
-  printf("Nome do time: ");
-  fgets(new_team.name, 25, stdin);
-  if(new_team.name[strlen(new_team.name) - 1] == '\n') new_team.name[strlen(new_team.name) - 1] = '\0';
+  getTeamName("Nome do time: ", new_team.name);
 
-  new_team.id = size + TEAMS_DEFAULT_ID;
+  int size = getAmountInBinaryFile(file, sizeof(Team));
+  new_team.id = TEAMS_DEFAULT_ID;
+  if (size > 0) {
+    Team last_team;
+    fseek(file, -sizeof(Team), SEEK_END); 
+    fread(&last_team, sizeof(Team), 1, file); 
+    new_team.id = last_team.id + 1;
+    rewind(file);
+} 
 
   fwrite(&new_team, sizeof(Team), 1, file);
 
   fclose(file);
   printf("\nTime salvo com sucesso!\n\n");
-
   pressEnterToContinue();
 }
 
-// NOT FOUND TEAM
-// TEAM SCAN NAME
+
 void updateTeam(){
   cleanScreen();
 
-  // Team new_team;
-  // printf("Id do time: ");
-  // scanf("%d", &new_team.id);
-  // cleanInputBuffer();
-  // printf("Nome do time: ");
-  // fgets(new_team.name, 25, stdin);
-  // new_team.name[strcspn(new_team.name, "\n")] = '\0';
+  FILE *file;
+  if (!doesFileOpen(&file, "rb+")) return;
+  if (isFileEmpty(file)) { fclose(file); return; }
 
-  // readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
+  int id = scanInteger("Id do time: ");
 
-  // for(int i = 0; i < teams.teams_amount; i++){
-  //   if(teams.teams[i].id == new_team.id){
-  //     strcpy(teams.teams[i].name, new_team.name);
-  //     break;
-  //   }
-  // }
-  
-  // writeBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
+  Team team;
+  int updated = 0;
+  while(fread(&team, sizeof(Team), 1, file) == 1 && updated == 0){
+    if(team.id != id) continue;
 
-  printf("\nO nome do time foi atualizado com sucesso!\n\n");
+    getTeamName("Nome do time: ", team.name);
+    fseek(file, -sizeof(Team), SEEK_CUR);
+    fwrite(&team, sizeof(Team), 1, file);
+    fflush(file);
+    updated = 1;
+  }
+  fclose(file);
+
+  if(updated) printf("\nO time foi atualizado com sucesso!\n\n");
+  else printf("\nTime não encontrado!\n\n");
+
   pressEnterToContinue();
 }
 
-// NOT FOUND TEAM
+
 void deleteTeam(){
   cleanScreen();
 
-  // int team_id;
-  // printf("Id do time: ");
-  // scanf("%d", &team_id);
+  FILE *file;
+  if (!doesFileOpen(&file, "rb+")) return;
+  if (isFileEmpty(file)) { fclose(file); return; }
 
-  // readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
-  // for(int i = 0; i < teams.teams_amount; i++){
-  //   if(teams.teams[i].id == team_id){
-  //     for(int j = i; j < teams.teams_amount - 1; j++){
-  //       teams.teams[j] = teams.teams[j + 1];
-  //     }
-  //     teams.teams_amount--;
-  //     writeBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
-  //     printf("\nO time foi deletado com sucesso!\n\n");
-  //     cleanInputBuffer();
-  //     pressEnterToContinue();
-  //     return;
-  //   }
-  // }
+  int size = getAmountInBinaryFile(file, sizeof(Team));
+  Team *teams = (Team *) malloc(size * sizeof(Team));
+  if (teams == NULL) {
+    printf("Erro ao alocar memória.\n");
+    fclose(file);
+    return;
+  }
+  fread(teams, sizeof(Team), size, file);
 
-  printf("\nTime não encontrado!\n\n");
-  cleanInputBuffer();
-  pressEnterToContinue();
+  int id = scanInteger("Id do time: ");
+  int found = 0;
+  for (int i = 0; i < size; i++) {
+    if(teams[i].id != id) continue;
+    found = 1;
+    for (int j = i; j < size - 1; j++) {
+      teams[j] = teams[j + 1];
+    }
+    size--;
+    break;
+  }
+
+  if (!found) printf("\nTime com ID %d não encontrado.\n\n", id);
+  else {
+    freopen(TEAMS_FILENAME, "wb", file); // fecha o arquivo, reabre para escrita evitando ambniguidade
+    fwrite(teams, sizeof(Team), size, file);
+    printf("\nTime removido com sucesso!\n\n");
+  }
+
+  free(teams);
+  fclose(file);
+  cleanBufferNContinue();
 }
 
-int doesTeamExists(int team_id){
-  // readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
 
-  // for(int i = 0; i < teams.teams_amount; i++){
-  //   if(teams.teams[i].id == team_id){
-  //     return 1;
-  //   }
-  // }
+int doesTeamExists(int team_id){
+  FILE *file;
+  if(!doesFileOpen(&file, "rb")) return 0;
+  Team team;
+  while(fread(&team, sizeof(Team), 1, file) == 1){
+    if(team.id == team_id){
+      fclose(file);
+      return 1;
+    }
+  }
+  fclose(file);
   return 0;
 }
 
-Team getTeam(int team_id){
-  // readBinaryFile(TEAMS_FILENAME, &teams, sizeof(Teams));
 
-  // for(int i = 0; i < teams.teams_amount; i++){
-  //   if(teams.teams[i].id == team_id){
-  //     return teams.teams[i];
-  //   }
-  // }
+Team getTeam(int team_id){
+  FILE *file;
+  Team team;
+  if(!doesFileOpen(&file, "rb")){
+    while(fread(&team, sizeof(Team), 1, file) == 1){
+      if(team.id == team_id){
+        fclose(file);
+        return team;
+      }
+    }
+  }
 }
