@@ -225,7 +225,7 @@ void startRound() {
   cleanScreen();
   
   FILE* file;
-  if(!handleOpenBinaryFile(&file, "rb", LEAGUES_FILENAME)) return;
+  if(!handleOpenBinaryFile(&file, "rb+", LEAGUES_FILENAME)) return;
   if(handleBinaryFileEmpty(file, sizeof(League), "campeonato")) { fclose(file); return; }
 
   League league;
@@ -255,11 +255,19 @@ void startRound() {
     break;
   }
 
+  rewind(file);
   if(!started){
     printf("Todos os jogos da rodada já foram iniciados\n");
   } else {
-    freopen(LEAGUES_FILENAME, "wb", file);
-    fwrite(&league, sizeof(League), 1, file);
+    League temp;
+    while(fread(&temp, sizeof(League), 1, file)){
+      if(league.id == temp.id) {
+        fseek(file, -sizeof(League), SEEK_CUR);
+        fwrite(&league, sizeof(League), 1, file);
+        fflush(file);
+        break; 
+      }
+    }
     printf("\nRodada cadastrada com sucesso!\n\n");
   }
   fclose(file);
