@@ -5,6 +5,7 @@
 #include "./helpers/terminal/terminal.h"
 #include "./teams/teams.h"
 #include "./leagues/leagues.h"
+#include "./reports/reports.h"
 
 void showHeader(char* title){
   int traces_amount = 40;
@@ -16,11 +17,6 @@ void showHeader(char* title){
   if(title != "") printf(" - %s\n", title);
   else printf("\n");
   printf("%s\n", line);
-}
-
-void showMainOptionMenu(int invalid_option){
-  char* message = invalid_option ? "\nOPÇÃO INVALIDA!!! Selecione uma opção válida para continuar...\n" : "";
-  printf("0 - Encerrar aplicação\n1 - Gerenciar Times\n2 - Gerenciar Campeonatos\n%s\nEscolha uma opção: ", message);
 }
 
 void showTeamsMenu(){
@@ -82,12 +78,13 @@ void showLeagueMenu(){
 }
 
 int main(){
-  loadSettings();
   // cleanScreen();
+  loadSettings();
   int op, invalid_option = 0;
   do{
     showHeader("");
-    showMainOptionMenu(invalid_option);
+    char* message = invalid_option ? "\nOPÇÃO INVALIDA!!! Selecione uma opção válida para continuar...\n" : "";
+    printf("0 - Encerrar aplicação\n1 - Gerenciar Times\n2 - Gerenciar Campeonatos\n3 - Gerar Relatório de campeonato\n%s\nEscolha uma opção: ", message);
     scanf("%d", &op);
     invalid_option = 0;
     switch (op){
@@ -96,6 +93,8 @@ int main(){
       case 1: showTeamsMenu();
         break;
       case 2: showLeagueMenu();
+        break;
+      case 3: generateLeagueReport();
         break;
       default:
         invalid_option = 1;

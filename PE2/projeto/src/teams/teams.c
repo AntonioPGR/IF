@@ -5,42 +5,13 @@
 #include "../helpers/terminal/terminal.h"
 #include "../helpers/binary/binary.h"
 
-// SUPORT
-void getTeamName(char* label, char* input){
-  cleanInputBuffer();
-  printf("%s", label);
-  fgets(input, TEAMS_NAME_LENGHT, stdin);
-  if(input[strlen(input) - 1] == '\n') input[strlen(input) - 1] = '\0';
-}
-
-int doesFileOpen(FILE **file, const char* operation ) {
-  *file = fopen(TEAMS_FILENAME, operation);
-  if (*file == NULL) {
-    printf("Erro ao abrir o arquivo.\n");
-    pressEnterToContinue();
-    return 0;
-  }
-  return 1;
-}
-
-int isFileEmpty(FILE *file) {
-  int amount = getAmountInBinaryFile(file, sizeof(Team));
-  if (amount == 0) {
-    printf("Nenhum time cadastrado!\n\n");
-    cleanBufferNContinue();
-    return 1;
-  }
-  return 0;
-}
-
-
 // APP FUNCTIONS
 void listTeams() {
   cleanScreen();
 
   FILE *file;
-  if (!doesFileOpen(&file, "rb")) return;
-  if (isFileEmpty(file)) { fclose(file); return; }
+  if (!handleOpenBinaryFile(&file, "rb", TEAMS_FILENAME)) return;
+  if (handleBinaryFileEmpty(file, sizeof(Team), "time")) { fclose(file); return; }
 
   Team team;
   printf("|---------------------------------|\n");
@@ -61,10 +32,10 @@ void createTeam() {
   cleanScreen();
 
   FILE *file;
-  if(!doesFileOpen(&file, "ab+")) return;
+  if(!handleOpenBinaryFile(&file, "ab+", TEAMS_FILENAME)) return;
 
   Team new_team;
-  getTeamName("Nome do time: ", new_team.name);
+  getInputLine("Nome do time: ", 25, new_team.name);
 
   int size = getAmountInBinaryFile(file, sizeof(Team));
   new_team.id = TEAMS_DEFAULT_ID;
@@ -74,12 +45,12 @@ void createTeam() {
     fread(&last_team, sizeof(Team), 1, file); 
     new_team.id = last_team.id + 1;
     rewind(file);
-} 
+  } 
 
   fwrite(&new_team, sizeof(Team), 1, file);
 
   fclose(file);
-  printf("\nTime salvo com sucesso!\n\n");
+  printf("\nTime cadastrado com sucesso!\n\n");
   pressEnterToContinue();
 }
 
@@ -88,8 +59,8 @@ void updateTeam(){
   cleanScreen();
 
   FILE *file;
-  if (!doesFileOpen(&file, "rb+")) return;
-  if (isFileEmpty(file)) { fclose(file); return; }
+  if (!handleOpenBinaryFile(&file, "rb+", TEAMS_FILENAME)) return;
+  if (handleBinaryFileEmpty(file, sizeof(Team), "time")) { fclose(file); return; }
 
   int id = scanInteger("Id do time: ");
 
@@ -98,7 +69,7 @@ void updateTeam(){
   while(fread(&team, sizeof(Team), 1, file) == 1 && updated == 0){
     if(team.id != id) continue;
 
-    getTeamName("Nome do time: ", team.name);
+    getInputLine("Nome do time: ", 25, team.name);
     fseek(file, -sizeof(Team), SEEK_CUR);
     fwrite(&team, sizeof(Team), 1, file);
     fflush(file);
@@ -117,14 +88,15 @@ void deleteTeam(){
   cleanScreen();
 
   FILE *file;
-  if (!doesFileOpen(&file, "rb+")) return;
-  if (isFileEmpty(file)) { fclose(file); return; }
+  if (!handleOpenBinaryFile(&file, "rb+", TEAMS_FILENAME)) return;
+  if (handleBinaryFileEmpty(file, sizeof(Team), "time")) { fclose(file); return; }
 
   int size = getAmountInBinaryFile(file, sizeof(Team));
   Team *teams = (Team *) malloc(size * sizeof(Team));
   if (teams == NULL) {
     printf("Erro ao alocar memória.\n");
     fclose(file);
+    pressEnterToContinue();
     return;
   }
   fread(teams, sizeof(Team), size, file);
@@ -156,7 +128,7 @@ void deleteTeam(){
 
 int doesTeamExists(int team_id){
   FILE *file;
-  if(!doesFileOpen(&file, "rb")) return 0;
+  if(!handleOpenBinaryFile(&file, "rb", TEAMS_FILENAME)) return 0;
   Team team;
   while(fread(&team, sizeof(Team), 1, file) == 1){
     if(team.id == team_id){
@@ -169,15 +141,17 @@ int doesTeamExists(int team_id){
 }
 
 
-Team getTeam(int team_id){
+void getTeam(int team_id, Team* team){
   FILE *file;
-  Team team;
-  if(!doesFileOpen(&file, "rb")){
-    while(fread(&team, sizeof(Team), 1, file) == 1){
-      if(team.id == team_id){
+  Team search_team;
+  if(handleOpenBinaryFile(&file, "rb", TEAMS_FILENAME)){
+    while(fread(&search_team, sizeof(Team), 1, file) == 1){
+      if(search_team.id == team_id){
+        *team = search_team;
         fclose(file);
-        return team;
+        return;
       }
     }
+    fclose(file);
   }
 }

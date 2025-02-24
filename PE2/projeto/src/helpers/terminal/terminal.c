@@ -22,15 +22,6 @@ void cleanBufferNContinue(){
   pressEnterToContinue();
 }
 
-char* getInputLine(int max_size, char* label){
-  char* line = (char *) malloc(max_size*sizeof(char));
-  printf("%s", label);
-  cleanInputBuffer();
-  fgets(line, max_size, stdin);
-  line[strcspn(line, "\n")] = '\0';
-  return line;
-}
-
 int scanInteger(char* label){
   int number;
   printf("%s", label);
@@ -45,4 +36,11 @@ void printTableLine(int size){
   }
   printf("|");
   printf("\n");
+}
+
+void getInputLine(char* label, int max, char input[max]){
+  cleanInputBuffer();
+  printf("%s", label);
+  fgets(input, max, stdin);
+  if(input[strlen(input) - 1] == '\n') input[strlen(input) - 1] = '\0';
 }

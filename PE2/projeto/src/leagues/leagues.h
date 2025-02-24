@@ -3,13 +3,17 @@
 
 #include "../teams/teams.h" 
 
-#define LEAGUES_FILENAME "src/data/leagues.bin"
+#define LEAGUES_FILENAME "src/data/leagues.dat"
 #define LEAGUES_DEFAULT_ID 2000
+
+#define LEAGUE_MAX_TEAMS 20
+#define LEAGUE_MIN_TEAMS 2
+
 #define LEAGUES_NAME_LENGHT 25
 #define ROUNDS_DEFAULT_ID 3000
 #define GAMES_DEFAULT_ID 4000
 
-typedef struct {
+typedef struct TeamPontuation{
   int team_id;
   int points;
   int goals_pro;
@@ -21,29 +25,32 @@ typedef struct {
   int losses;
 } TeamPontuation;
 
-typedef struct{
+typedef struct Score{
   int team_id;
   int score;
 } Score;
 
-typedef struct{
+typedef struct Game{
   int id;
   Score home;
   Score visitor;
 } Game;
 
-typedef struct {
+typedef struct Round{
   int id;
-  int lague_id;
-  Game games[];
+  Game games[LEAGUE_MAX_TEAMS - 1];
 } Round;
 
-typedef struct{
+typedef struct League{
   int id;
   char name[LEAGUES_NAME_LENGHT];
-  Team teams[];
+  int teams_amount;
+  int teams_ids[LEAGUE_MAX_TEAMS];
+  int rounds_amount;
+  Round rounds[LEAGUE_MAX_TEAMS - 1];
 } League;
 
+int findLeagueById(FILE *file, int league_id, League *foundLeague);
 void createLeague();
 void showLeagues();
 void showTeamsInLeague();

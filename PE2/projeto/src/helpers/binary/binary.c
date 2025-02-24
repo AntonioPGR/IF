@@ -1,15 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-
-int doesFileExists(char* FILENAME){
-  FILE *file = fopen(FILENAME, "rb");
-  if (file == NULL) {
-    fclose(file);
-    return 0;
-  }
-  fclose(file);
-  return 1;
-}
+#include "../terminal/terminal.h"
 
 void writeBinaryFile(const char *FILENAME, void *data, size_t size) {
   FILE *file = fopen(FILENAME, "wb");
@@ -41,13 +32,39 @@ void readBinaryFile(const char *FILENAME, void *buffer, size_t size) {
   fclose(file);
 }
 
+int handleOpenBinaryFile(FILE **file, const char* operation, char* name) {
+  *file = fopen(name, operation);
+  if (*file == NULL) {
+    printf("Erro ao abrir o arquivo.\n");
+    cleanBufferNContinue();
+    return 0;
+  }
+  return 1;
+}
+
 long sizeOfBinaryFile(FILE *file) {
-    fseek(file, 0, SEEK_END);
-    long size = ftell(file);
-    rewind(file); 
-    return size;
+  fseek(file, 0, SEEK_END);
+  long size = ftell(file);
+  rewind(file); 
+  return size;
 }
 
 int getAmountInBinaryFile(FILE *file, int size) {
   return sizeOfBinaryFile(file) / size;
 }
+
+int isBinaryFileEmpty(FILE *file, size_t size){
+  int amount = getAmountInBinaryFile(file, size);
+  if (amount == 0) return 1;
+  return 0;
+}
+
+int handleBinaryFileEmpty(FILE *file, size_t size, char* message){
+  if (isBinaryFileEmpty(file, size)) {
+    printf("Nenhum %s cadastrado!\n\n", message);
+    cleanBufferNContinue();
+    return 1;
+  }
+  return 0;
+}
+

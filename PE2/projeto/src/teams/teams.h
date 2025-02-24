@@ -1,7 +1,7 @@
 #ifndef TEAMS_H
 #define TEAMS_H
 
-#define TEAMS_FILENAME "src/data/teams.bin"
+#define TEAMS_FILENAME "src/data/teams.dat"
 #define TEAMS_DEFAULT_ID 1000
 #define TEAMS_NAME_LENGHT 25
 
@@ -16,6 +16,6 @@ void deleteTeam();
 void updateTeam();
 
 int doesTeamExists(int team_id);
-Team getTeam(int team_id);
+void getTeam(int team_id, Team* team);
 
 #endif
