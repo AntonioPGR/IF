@@ -78,7 +78,7 @@ void showLeagueMenu(){
 }
 
 int main(){
-  // cleanScreen();
+  cleanScreen();
   loadSettings();
   int op, invalid_option = 0;
   do{
