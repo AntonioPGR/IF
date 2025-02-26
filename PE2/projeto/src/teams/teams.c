@@ -39,6 +39,7 @@ void createTeam() {
 
   int size = getAmountInBinaryFile(file, sizeof(Team));
   new_team.id = TEAMS_DEFAULT_ID;
+  // Pega o ultimo ID e incrementa
   if (size > 0) {
     Team last_team;
     fseek(file, -sizeof(Team), SEEK_END); 
@@ -64,6 +65,7 @@ void updateTeam(){
 
   int id = scanInteger("Id do time: ");
 
+  // Caminha no vetor para trocar o time
   Team team;
   int updated = 0;
   while(fread(&team, sizeof(Team), 1, file) == 1 && updated == 0){
@@ -102,6 +104,7 @@ void deleteTeam(){
   fread(teams, sizeof(Team), size, file);
 
   int id = scanInteger("Id do time: ");
+  // Se o id for o do time deletado, retira ele do vetor
   int found = 0;
   for (int i = 0; i < size; i++) {
     if(teams[i].id != id) continue;
@@ -126,6 +129,7 @@ void deleteTeam(){
 }
 
 
+// Verifica se o tiie existe e retorna verdadeiro ou falso
 int doesTeamExists(int team_id){
   FILE *file;
   if(!handleOpenBinaryFile(&file, "rb", TEAMS_FILENAME)) return 0;
@@ -141,6 +145,7 @@ int doesTeamExists(int team_id){
 }
 
 
+// Retorna o time por meio do ponteiro
 void getTeam(int team_id, Team* team){
   FILE *file;
   Team search_team;

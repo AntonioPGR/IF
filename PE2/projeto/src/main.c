@@ -8,15 +8,11 @@
 #include "./reports/reports.h"
 
 void showHeader(char* title){
-  int traces_amount = 40;
-  char line[traces_amount];
-  memset(line, '-', traces_amount);
-  line[traces_amount] = '\0' ;
-  printf("%s\n", line);
-  printf("BOLA NA REDE");
+  printTableLine(40);
+  printf("| %-36s |", "BOLA NA REDE");
   if(title != "") printf(" - %s\n", title);
   else printf("\n");
-  printf("%s\n", line);
+  printTableLine(40);
 }
 
 void showTeamsMenu(){

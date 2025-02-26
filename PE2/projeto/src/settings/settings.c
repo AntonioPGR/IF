@@ -4,6 +4,7 @@
 #include <windows.h> 
 #endif
 
+// Para colocar acento e ç
 void loadSettings() {
   setlocale(LC_ALL, "en_US.UTF-8");
   #ifdef _WIN32

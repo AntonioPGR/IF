@@ -2,36 +2,7 @@
 #include <string.h>
 #include "../terminal/terminal.h"
 
-void writeBinaryFile(const char *FILENAME, void *data, size_t size) {
-  FILE *file = fopen(FILENAME, "wb");
-  if (file == NULL) {
-    perror("Error opening file for writing");
-    return;
-  }
-  fwrite(data, size, 1, file);
-  fclose(file);
-}
-
-void appendBynaryFile(const char *FILENAME, void *data, size_t size) {
-  FILE *file = fopen(FILENAME, "ab");
-  if (file == NULL) {
-    perror("Error opening file for writing");
-    return;
-  }
-  fwrite(data, size, 1, file);
-  fclose(file);
-}
-
-void readBinaryFile(const char *FILENAME, void *buffer, size_t size) {
-  FILE *file = fopen(FILENAME, "rb");
-  if (file == NULL) {
-    memset(buffer, 0, size);
-    return;
-  }
-  fread(buffer, size, 1, file);
-  fclose(file);
-}
-
+// Abre meu arquivo de acordo com a operação passada
 int handleOpenBinaryFile(FILE **file, const char* operation, char* name) {
   *file = fopen(name, operation);
   if (*file == NULL) {
@@ -42,6 +13,7 @@ int handleOpenBinaryFile(FILE **file, const char* operation, char* name) {
   return 1;
 }
 
+// Dita o tamanho do arquivo
 long sizeOfBinaryFile(FILE *file) {
   fseek(file, 0, SEEK_END);
   long size = ftell(file);

@@ -24,6 +24,7 @@ void generateLeagueReport() {
 
   fclose(file);
 
+  // Abre o arquivo TXT para escrita
   char filename[50];
   snprintf(filename, sizeof(filename), "src/data/%d.txt", league.id);
 
@@ -39,7 +40,7 @@ void generateLeagueReport() {
   fprintf(report, "%s\n", league.name);
   fprintf(report, "----------------------------------------------\n\n");
   
-  // PARTICIPANTES
+  // TIMES PARTICIPANTES
   fprintf(report, "Times Participantes:\n");
   for (int i = 0; i < league.teams_amount; i++) {
     Team team;
@@ -48,7 +49,7 @@ void generateLeagueReport() {
   }
   fprintf(report, "\n");
 
-  // TABELA
+  // TABELA DE PONTUACAO
   TeamPontuation teams_order[league.teams_amount];
   for(int i = 0; i < league.teams_amount; i++){
     teams_order[i].team_id = league.teams_ids[i];
@@ -143,7 +144,7 @@ void generateLeagueReport() {
   }
   fprintf(report, "|-------|------|--------------------------|-----|-----|-----|------|------|------|--------|\n\n");
 
-
+  // MOSTRA RODADAS
   fprintf(report, "Rodadas:\n");
   for (int i = 0; i < league.rounds_amount; i++) {
     fprintf(report, "  Rodada %d:\n", i + 1);

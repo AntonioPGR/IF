@@ -77,6 +77,7 @@ void createLeague() {
   League new_league;
   getInputLine("Nome do campeonato: ", 25, new_league.name);
   
+  // Liga par dentro dos limites estabelecidos ( LEAGUE MIN E MAX )
   new_league.teams_amount = 0;
   while(
     new_league.teams_amount < LEAGUE_MIN_TEAMS || 
@@ -88,6 +89,7 @@ void createLeague() {
   }
   new_league.rounds_amount = new_league.teams_amount - 1;
 
+  // Escaneia o ID do time e verifica se existe
   for (int i = 0; i < new_league.teams_amount; i++) {
     printf("ID do time %d: ", i + 1);
     int id;
@@ -100,6 +102,7 @@ void createLeague() {
     new_league.teams_ids[i] = id;
   }
 
+  // Pega o ultimo ID e incrementa
   new_league.id = LEAGUES_DEFAULT_ID;
   if (getAmountInBinaryFile(file, sizeof(League)) > 0) {
     League last_league;
@@ -109,15 +112,18 @@ void createLeague() {
     rewind(file);
   }
 
+  // Cria um vetor com id dos times do campeonato
   int teams_ids[new_league.teams_amount];
   for (int i = 0; i < new_league.teams_amount; i++) {
     teams_ids[i] = new_league.teams_ids[i];
   }
   
+  // Cria as rodadas
   for (int i = 0; i < new_league.teams_amount - 1; i++) {
     Round new_round;
     new_round.id = ROUNDS_DEFAULT_ID + i;
     
+    // Adiciona informaçoes das rodadas
     for (int j = 0; j < new_league.teams_amount / 2; j++) {
       new_round.games[j].id = GAMES_DEFAULT_ID + j;
       new_round.games[j].home.team_id = teams_ids[j];
@@ -126,6 +132,8 @@ void createLeague() {
       new_round.games[j].visitor.score = -1;
     }
     
+    // Rotaciona os vetor de id de times
+    // [1, 2, 3, 4, 5, 6] -> [1, 6, 2, 5, 3, 4]
     int temp = teams_ids[new_league.teams_amount - 1];
     for (int k = new_league.teams_amount - 1; k > 1; k--) {
       teams_ids[k] = teams_ids[k - 1];
@@ -156,6 +164,7 @@ void deleteLeague() {
     return;
   }
 
+  // Aloca vetor temporario com os times
   int size = getAmountInBinaryFile(file, sizeof(League));
   League* leagues = malloc(size * sizeof(League));
   if(leagues == NULL){
@@ -166,6 +175,7 @@ void deleteLeague() {
   }
   fread(leagues, sizeof(League), size, file);
 
+  // Se o id for o do time delatado, retira ele do vetor
   for(int i = 0; i < size; i++){
     if(leagues[i].id != league_id) continue;
     for(int j = i; j < size - 1; j++){
@@ -175,10 +185,12 @@ void deleteLeague() {
     break;
   }
 
+  // Salva no arquivo
   freopen(LEAGUES_FILENAME, "wb", file);
   fwrite(leagues, sizeof(League), size, file);
   printf("\nCampeonato deletado com sucesso!\n\n");
   fclose(file);
+
   free(leagues);
   cleanBufferNContinue();
 }
@@ -199,6 +211,7 @@ void showLeagueGames() {
     return;
   }
 
+  // Para cada rodada, mostra os jogos dela
   printTableLine(86);
   printf("| %-82s |\n", league.name);
   printTableLine(86);
@@ -237,6 +250,7 @@ void startRound() {
     return;
   }
 
+  // Ve qual a próxima rodada nao inciada e pega os placares dela
   int started = 0;
   for(int i = 0; i < league.rounds_amount; i++){
     if(league.rounds[i].games[0].home.score != -1) continue;
@@ -259,6 +273,7 @@ void startRound() {
   if(!started){
     printf("Todos os jogos da rodada já foram iniciados\n");
   } else {
+    // Sobresceve o campeonato no arquivo
     League temp;
     while(fread(&temp, sizeof(League), 1, file)){
       if(league.id == temp.id) {
@@ -291,7 +306,7 @@ void showTable() {
     return;
   }
 
-
+  // Cria um vetor com o id dos times e suas pontuações zeradas
   TeamPontuation teams_order[league.teams_amount];
   for(int i = 0; i < league.teams_amount; i++){
     teams_order[i].team_id = league.teams_ids[i];
@@ -305,6 +320,7 @@ void showTable() {
     teams_order[i].losses = 0;
   }
 
+  // Se o campeonato nao foi iniciado, mostra os times em ordem alfabetica
   if(league.rounds[0].games[0].home.score == -1){
     for (int i = 0; i < league.teams_amount - 1; i++) {
       for (int j = i + 1; j < league.teams_amount; j++) {
@@ -318,13 +334,17 @@ void showTable() {
         }
       }
     }
-  } else {
+  } 
+  // Se o campenato foi iniciado, calcula as pontuações
+  else {
+    // para cada rodada, itera todos os jogos
     for(int i = 0; i < league.rounds_amount; i++){
       Round round = league.rounds[i];
       for(int j = 0; j < league.teams_amount/2; j++){
         Game game = round.games[j];
         if(game.home.score == -1) continue;
 
+        // Busca a posicao do time visitante e do dono da casa no vetor de times
         int home_pos = -1, visitor_pos = -1;
         for(int k = 0; k < league.teams_amount; k++){
           if(teams_order[k].team_id == game.home.team_id)  home_pos = k;
@@ -332,6 +352,7 @@ void showTable() {
           if(home_pos != -1 && visitor_pos != -1) break;
         }
 
+        // Adiciona as pontuações
         teams_order[home_pos].goals_pro += game.home.score;
         teams_order[visitor_pos].goals_pro += game.visitor.score;
         teams_order[home_pos].goals_against += game.visitor.score;
@@ -358,14 +379,17 @@ void showTable() {
       }
     }
 
+    // Ordena os times por pontos e saldo de gols
     for(int i = 0; i < league.teams_amount; i++){
       for(int j = i + 1; j < league.teams_amount; j++){
+        // Se o time i tiver menos pontos que o j, troca
         if(teams_order[i].points < teams_order[j].points){
           TeamPontuation temp = teams_order[i];
           teams_order[i] = teams_order[j];
           teams_order[j] = temp;
-        }
-        if(teams_order[i].points == teams_order[j].points){
+        } 
+        // Se os times tiverem a mesma pontuação, ordena por saldo de gols
+        else if(teams_order[i].points == teams_order[j].points){
           if(teams_order[i].goals_difference < teams_order[j].goals_difference){
             TeamPontuation temp = teams_order[i];
             teams_order[i] = teams_order[j];
@@ -390,5 +414,3 @@ void showTable() {
 
   cleanBufferNContinue();
 }
-
-// deletar time cadastrado em campeonato
