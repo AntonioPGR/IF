@@ -18,6 +18,7 @@ void listTeams() {
   printf("| %-32s|\n", "TIMES CADASTRADOS");
   printf("|---------------------------------|\n");
   printf("|- ID -|- NOME -------------------|\n");
+  int i = 0;
   while (fread(&team, sizeof(Team), 1, file) == 1) {
     printf("| %d | %-24s |\n", team.id, team.name);
   }
