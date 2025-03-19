@@ -1,41 +1,64 @@
+// Selection Sort Normal
+// Fazer selection sort melhorado posteriormente
+// Melhor: O(n2)
+// Médio: O(n2)
+// Pior: O(n2)
 #include <iostream>
 #include <vector>
+#include <chrono>
+#include <math.h>
 
 using namespace std;
+using namespace std::chrono;
 
-int main(){
-
-  vector<int> a= {4, 8, 1, 0, 9, 0, 2, 7, 3, 6};
-
-  for(int i = 0; i < a.size(); i++){
-    cout << a.at(i) << " ";
-  }
-  cout << endl;
-
-  // Selection Sort Normal
-  // Fazer selection sort melhorado posteriormente
-  // Melhor: O(n2)
-  // Médio: O(n2)
-  // Pior: O(n2)
+void selectionSort(vector<int>&arr){
   int pos, i, j, temp;
-  for(i = 0; i < a.size() - 1; i++){
+  for(i = 0; i < arr.size() - 1; i++){
     pos = i;
-    for(j = i+1; j < a.size(); j++){
-      if(a.at(j) < a.at(pos)){
+    for(j = i+1; j < arr.size(); j++){
+      if(arr.at(j) < arr.at(pos)){
         pos = j;
       }
     }
     if(pos != i){
-      temp = a.at(i);
-      a.at(i) = a.at(pos);
-      a.at(pos) = temp;
+      temp = arr.at(i);
+      arr.at(i) = arr.at(pos);
+      arr.at(pos) = temp;
     }
+    if(i % 10000 == 0) cout << "Atual: " << i << endl;
   }
+}
 
+void populateArray(vector<int>& arr, int amount, int max){
+  for(int i = 0; i < amount; i++){
+    arr.push_back(rand() % (max + 1));
+  }
+}
 
-  for(int i = 0; i < a.size(); i++){
-    cout << a.at(i) << " ";
+void printArray(vector<int>& arr){
+  for(int i = 0; i < arr.size(); i++){
+    cout << arr.at(i) << " ";
   }
   cout << endl;
+}
 
+int main(){
+  int max = 100000;
+  vector<int> arr;
+  for(int i = 1; i <= 6; i++){
+    int amount = 1;
+    for (int j = 0; j < i; j++) {
+      amount *= 10;
+    }
+    arr.reserve(amount);
+    populateArray(arr, amount, max);
+
+    auto start = high_resolution_clock::now();
+
+    selectionSort(arr);
+    
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << amount << " Items: " << duration.count() << " microsegundos" << endl;
+  }
 }

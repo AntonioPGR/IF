@@ -1,36 +1,63 @@
+// InserctionSort 
+// 
+// Melhor: O(n)
+// Médio: O(n2)
+// Pior: O(n2)
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
+
+void insertionSort(vector<int>& arr){
+  int i, j, key;
+  for(i = 1; i < arr.size(); i++){
+    key = arr.at(i);
+    j = i-1;
+    while(j >= 0 && arr.at(j) > key){
+      arr.at(j+1) = arr.at(j);
+      j -= 1;
+    }
+    arr.at(j+1) = key;
+    if(i % 10000 == 0) cout << "Atual: " << i << endl;
+  }
+}
+
+void populateArray(vector<int>& arr, int amount, int max){
+  for(int i = 0; i < amount; i++){
+    arr.push_back(rand() % (max + 1));
+  }
+}
+
+void printArray(vector<int>& arr){
+  for(int i = 0; i < arr.size(); i++){
+    cout << arr.at(i) << " ";
+  }
+  cout << endl;
+}
 
 int main(){
 
-  vector<int> a= {4, 8, 1, 0, 9, 0, 2, 7, 3, 6};
-
-  for(int i = 0; i < a.size(); i++){
-    cout << a.at(i) << " ";
-  }
-  cout << endl;
-
-  // InserctionSort 
-  // 
-  // Melhor: O(n)
-  // Médio: O(n2)
-  // Pior: O(n2)
-  int i, j, key;
-  for(i = 1; i < a.size(); i++){
-    key = a.at(i);
-    j = i-1;
-    while(j >= 0 && a.at(j) > key){
-      a.at(j+1) = a.at(j);
-      j -= 1;
+  int amount = 10000;
+  int max = 100000;
+  vector<int> arr;
+  for(int i = 1; i <= 6; i++){
+    int amount = 1;
+    for (int j = 0; j < i; j++) {
+      amount *= 10;
     }
-    a.at(j+1) = key;
+    arr.reserve(amount);
+    populateArray(arr, amount, max);
+
+    auto start = high_resolution_clock::now();
+
+    insertionSort(arr);  
+    
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << amount << " Items: " << duration.count() << " microsegundos" << endl;
   }
 
-  for(int i = 0; i < a.size(); i++){
-    cout << a.at(i) << " ";
-  }
-  cout << endl;
-
+  
 }
