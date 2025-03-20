@@ -43,8 +43,8 @@ void printArray(vector<int>& arr){
 
 void shellSort(vector<int>& arr){
   int n, gap, i, j, temp;
-  n = arr.size();
-  for(gap=n/2; gap >0; gap /= 2){
+  int n = arr.size();
+  for(int gap=n/2; gap >0; gap /= 2){
     for(j = gap; j < n; j += 1){
       temp = arr[j];
       for(i = j; i >= gap &&  arr[i-gap] > temp; i -= gap){
