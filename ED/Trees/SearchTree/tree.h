@@ -19,11 +19,12 @@ class BinarySearchTree{
     bool isFull();
     void insert(int n);
     void remove(int n);
-    void removeSearch(int n, Node*& currentNode);
     void deleteNode(Node*& currentNode);
     void getSucessor(int& n, Node* temp);
     Node* search(int n);
     void printPreordem(Node* currentNode);
     void printInorder(Node* currentNode);
     void printPostOrder(Node* currentNode);
+    void deepFirstSeach();
+    void breadthFirstSearch();
 };

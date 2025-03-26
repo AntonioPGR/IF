@@ -1,5 +1,8 @@
 #include <iostream>
 #include <cstddef>
+#include <string>
+#include <queue>
+#include <stack>
 #include "tree.h"
 
 using namespace std;
@@ -13,7 +16,9 @@ BinarySearchTree::~BinarySearchTree(){
   root = NULL;
 } 
 
-void BinarySearchTree::deleteTree(Node* currentNode){}
+void BinarySearchTree::deleteTree(Node* currentNode){
+  deleteNode(root);
+}
 
 Node* BinarySearchTree::getRoot(){
   return root;
@@ -53,7 +58,8 @@ void BinarySearchTree::insert(int n){
   Node* parent = NULL;
   while(insertion != NULL){\
     parent = insertion;
-    if(n > insertion->value) insertion = insertion->right;
+    if(n == insertion->value) return;
+    else if(n > insertion->value) insertion = insertion->right;
     else insertion = insertion->left;
   }
 
@@ -61,13 +67,37 @@ void BinarySearchTree::insert(int n){
   else parent->left = node;
 }
 
-void BinarySearchTree::remove(int n){}
+void BinarySearchTree::remove(int n){
+  Node* node = search(n);
+  deleteNode(node);
+}
 
-void BinarySearchTree::removeSearch(int n, Node*& currentNode){}
+void BinarySearchTree::deleteNode(Node*& currentNode){
+  if(currentNode->right == NULL){
+    Node* temp = currentNode;
+    currentNode = currentNode->left;
+    delete temp;
+    return;
+  }
+  if(currentNode->left == NULL){
+    Node* temp = currentNode;
+    currentNode = currentNode->right;
+    delete temp;
+    return;
+  }
 
-void BinarySearchTree::deleteNode(Node*& currentNode){}
+  Node* successor = currentNode->right;
+  Node* parent = currentNode;
+  while (successor->left != NULL) {
+    parent = successor;
+    successor = successor->left;
+  }
 
-void BinarySearchTree::getSucessor(int& n, Node* temp){}
+  currentNode->value = successor->value;
+
+  if (parent->left == successor) deleteNode(parent->left);
+  else deleteNode(parent->right);
+}
 
 Node* BinarySearchTree::search(int n){
   Node* node = root;
@@ -80,8 +110,30 @@ Node* BinarySearchTree::search(int n){
   return node;
 }
 
-void BinarySearchTree::printPreordem(Node* currentNode){}
+void BinarySearchTree::printPreordem(Node* currentNode){
+  if(currentNode != NULL){
+    cout << currentNode->value << " ";
 
-void BinarySearchTree::printInorder(Node* currentNode){}
+    printPreordem(currentNode->left);
+    printPreordem(currentNode->right);
+  }
+}
 
-void BinarySearchTree::printPostOrder(Node* currentNode){}
+void BinarySearchTree::printInorder(Node* currentNode){
+  if(currentNode != NULL){
+    printPreordem(currentNode->left);
+
+    cout << currentNode->value << " ";
+
+    printPreordem(currentNode->right);
+  }
+}
+
+void BinarySearchTree::printPostOrder(Node* currentNode){
+  if(currentNode != NULL){
+    printPreordem(currentNode->left);
+    printPreordem(currentNode->right);
+    
+    cout << currentNode->value << " ";
+  }
+}
