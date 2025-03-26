@@ -56,7 +56,7 @@ void BinarySearchTree::insert(int n){
 
   Node* insertion = root;
   Node* parent = NULL;
-  while(insertion != NULL){\
+  while(insertion != NULL){
     parent = insertion;
     if(n == insertion->value) return;
     else if(n > insertion->value) insertion = insertion->right;
@@ -121,18 +121,18 @@ void BinarySearchTree::printPreordem(Node* currentNode){
 
 void BinarySearchTree::printInorder(Node* currentNode){
   if(currentNode != NULL){
-    printPreordem(currentNode->left);
+    printInorder(currentNode->left);
 
     cout << currentNode->value << " ";
 
-    printPreordem(currentNode->right);
+    printInorder(currentNode->right);
   }
 }
 
 void BinarySearchTree::printPostOrder(Node* currentNode){
   if(currentNode != NULL){
-    printPreordem(currentNode->left);
-    printPreordem(currentNode->right);
+    printPostOrder(currentNode->left);
+    printPostOrder(currentNode->right);
     
     cout << currentNode->value << " ";
   }
