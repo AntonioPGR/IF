@@ -3,63 +3,57 @@
 
 using namespace std;
 
-struct Magia{
-  int dano;
-  int raio;
-};
-
-Magia calculaMagia(string tipo, int nivel){
-  Magia magia;
-  if (tipo == "fire") {
-    magia.dano = 200;
-    if(nivel == 1) magia.raio = 20;
-    else if(nivel == 2) magia.raio = 30;
-    else if(nivel == 3) magia.raio = 50;
-  } else if (tipo == "water") {
-    magia.dano = 300;
-    if(nivel == 1) magia.raio = 10;
-    else if(nivel == 2) magia.raio = 25;
-    else if(nivel == 3) magia.raio = 40;
-  } else if (tipo == "earth") {
-    magia.dano = 400;
-    if(nivel == 1) magia.raio = 25;
-    else if(nivel == 2) magia.raio = 55;
-    else if(nivel == 3) magia.raio = 70;
-  } else{
-    magia.dano = 100;
-    if(nivel == 1) magia.raio = 18;
-    else if(nivel == 2) magia.raio = 38;
-    else if(nivel == 3) magia.raio = 60;
+int getRadius(string magic, int level){
+  if(magic == "fire") switch (level){
+    case 1: return 20;
+    case 2: return 30;
+    case 3: return 50;
   }
-  return magia;
+  if(magic == "water") switch (level){
+    case 1: return 10;
+    case 2: return 25;
+    case 3: return 40;
+  }
+  if(magic == "earth") switch (level){
+    case 1: return 25;
+    case 2: return 55;
+    case 3: return 70;
+  }
+  if(magic == "air") switch (level){
+    case 1: return 18;
+    case 2: return 38;
+    case 3: return 60;
+  }
+}
+
+int getDamage(string magic){
+  if(magic == "fire") return 200;
+  if(magic == "water") return 300;
+  if(magic == "earth") return 400;
+  if(magic == "air") return 100;
 }
 
 int main(){
-  int casos_de_teste;
-  cin >> casos_de_teste;
-
-  int w, h, x0, y0, nivel, cx, cy;
-  string magia;
-  for(int i = 0; i < casos_de_teste; i++){
+  int t;
+  cin >> t;
+  while (t--){
+    // Canto inferior esquerdo
     int w, h, x0, y0;
     cin >> w >> h >> x0 >> y0;
 
-    string tipoMagia;
-    int nivel, cx, cy;
-    cin >> tipoMagia >> nivel >> cx >> cy;
+    string magic;
+    int n, cx, cy;
+    cin >> magic >> n >> cx >> cy;
 
-    int nearestX = max(x0, min(cx, x0 + w));
-    int nearestY = max(y0, min(cy, y0 + h));
+    int radius = getRadius(magic, n);
 
-    int dx = cx - nearestX;
-    int dy = cy - nearestY;
-    double distancia = sqrt(dx * dx + dy * dy);
+    int px = max(x0, min(cx, x0+w));
+    int py = max(y0, min(cy, y0+h));
 
-    Magia mg = calculaMagia(tipoMagia, nivel);
+    int d = (px - cx) * (px - cx) + (py - cy) * (py - cy);
 
-    if(distancia < mg.raio) cout << mg.dano << endl;
+    if(d <= radius * radius) cout << getDamage(magic) << endl;
     else cout << 0 << endl;
 
   }
-
 }
