@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-void bringGreatestModuleUp(int start_index, int n, float** a, float* b) {
+void bringLineUp(int start_index, int n, float** a, float* b) {
   int greatest_line = start_index;
   for (int i = start_index + 1; i < n; i++) {
     if (fabsf(a[i][start_index]) > fabsf(a[greatest_line][start_index])) greatest_line = i;
@@ -60,7 +60,7 @@ int main(){
   }
 
   for(int j = 0; j < (n-1); j++){
-    bringGreatestModuleUp(j, n, a, b);
+    bringLineUp(j, n, a, b);
     solveGaussLine(j, n, a, b);
   }
 
