@@ -1,0 +1,22 @@
+main {
+  p {
+    max-width: 700px;
+  }
+
+  section.videos {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+    max-width: 82rem;
+
+    iframe {
+      width: 40rem;
+      height: 22.5rem; 
+      border-radius: 0.75rem;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+    }
+  }
+}

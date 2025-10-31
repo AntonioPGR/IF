@@ -1,0 +1,39 @@
+main {
+  div.wrapper{
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid var(--white-1);
+
+    table{
+      max-width: 100rem;
+      overflow: hidden;
+      thead {
+        tr {
+          background-color: var(--blue-1);
+          th {
+            border-bottom: 1px solid var(--white-1);
+            padding: 1.5rem 1rem; 
+            font-size: 1.2rem;
+            text-align: left;
+          }
+        }
+      }
+      tbody {
+        tr {
+          &:nth-child(even) {
+            background-color: #262626;
+          }
+          &:hover {
+            background-color: rgba(61, 113, 158, 0.6);
+          }
+          td {
+            border-bottom: 1px solid var(--white-1);
+            padding: 1rem 1rem; 
+            font-size: 1.2rem;
+            text-align: left;
+          }
+        }
+      }
+    }
+  }
+}

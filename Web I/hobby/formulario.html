@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<head>
+  <link rel="stylesheet" href="css/page_formulario.css">
+</head>
+<body class="universe_bg">
+  <main class="page_main">
+    <h1 class="page_title">Comunidade de Astronomia</h1>
+    <p class="page_text">Preencha o formulário abaixo para receber novidades, participar de eventos e se conectar com outros apaixonados pelo universo.</p>
+
+    <form action="#" method="post" enctype="multipart/form-data">
+      
+      <fieldset>
+        <legend>Informações Pessoais</legend>
+
+        <label for="nome">Nome completo:</label>
+        <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
+
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" placeholder="exemplo@dominio.com" required>
+
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" placeholder="Crie uma senha" required pattern=".{6,}" title="A senha deve ter pelo menos 6 caracteres.">
+
+        <label for="telefone">Telefone:</label>
+        <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" pattern="\(\d{2}\)\s?\d{4,5}-\d{4}" required>
+      </fieldset>
+
+      <fieldset>
+        <legend>Dados Complementares</legend>
+
+        <label for="idade">Idade:</label>
+        <input type="number" id="idade" name="idade" min="10" max="120" step="1">
+
+        <label for="data-nascimento">Data de nascimento:</label>
+        <input type="date" id="data-nascimento" name="data-nascimento">
+
+        <label for="hora-observacao">Horário favorito para observar o céu:</label>
+        <input type="time" id="hora-observacao" name="hora-observacao">
+
+        <label for="data-evento">Próximo evento que pretende participar:</label>
+        <input type="datetime-local" id="data-evento" name="data-evento">
+
+        <label for="mes-favorito">Mês favorito para observações:</label>
+        <input type="month" id="mes-favorito" name="mes-favorito">
+
+        <label for="semana-favorita">Semana preferida do ano:</label>
+        <input type="week" id="semana-favorita" name="semana-favorita">
+      </fieldset>
+
+      <fieldset>
+        <legend>Preferências Astronômicas</legend>
+
+        <p>Tipo de conteúdo que você mais gosta:</p>
+        <label><input type="radio" name="tipo" value="artigos" required> Artigos</label>
+        <label><input type="radio" name="tipo" value="videos"> Vídeos</label>
+        <label><input type="radio" name="tipo" value="fotos"> Fotos</label>
+
+        <p>Assuntos de interesse:</p>
+        <label><input type="checkbox" name="interesses" value="planetas"> Planetas</label>
+        <label><input type="checkbox" name="interesses" value="galaxias"> Galáxias</label>
+        <label><input type="checkbox" name="interesses" value="buracos-negros"> Buracos Negros</label>
+        <label><input type="checkbox" name="interesses" value="observacao"> Observação Amadora</label>
+
+        <label for="nivel">Nível de conhecimento:</label>
+        <select id="nivel" name="nivel" required>
+          <option value="">Selecione...</option>
+          <option value="iniciante">Iniciante</option>
+          <option value="intermediario">Intermediário</option>
+          <option value="avancado">Avançado</option>
+        </select>
+
+        <label for="equipamento">Equipamento que utiliza:</label>
+        <input list="equipamentos" id="equipamento" name="equipamento" placeholder="Digite ou selecione">
+        <datalist id="equipamentos">
+          <option value="Telescópio">
+          <option value="Binóculo">
+          <option value="Câmera DSLR">
+          <option value="Olho nu">
+        </datalist>
+
+        <label for="foto">Envie uma foto do seu equipamento (opcional):</label>
+        <input type="file" id="foto" name="foto" accept="image/*" multiple>
+      </fieldset>
+
+      <fieldset>
+        <legend>Preferências Visuais</legend>
+
+        <label for="cor-favorita">Cor favorita do céu:</label>
+        <input type="color" id="cor-favorita" name="cor-favorita" value="#1e88e5">
+
+        <label for="nivel-interesse">Nível de interesse (0–100): <span id="valor-range">50</span></label>
+        <input type="range" id="nivel-interesse" name="nivel-interesse" min="0" max="100" value="50" step="1" oninput="document.getElementById('valor-range').textContent = this.value;">
+      </fieldset>
+
+      <fieldset>
+        <legend>Mensagem</legend>
+
+        <label for="mensagem">Fale um pouco sobre o que te inspira na astronomia:</label>
+        <textarea id="mensagem" name="mensagem" rows="5" placeholder="Escreva aqui..." required></textarea>
+
+        <input type="hidden" name="origem" value="formulario-comunidade">
+      </fieldset>
+
+      <div class="buttons">
+        <button type="submit">Enviar</button>
+        <button type="reset">Limpar</button>
+      </div>
+    </form>
+  </main>
+  <script src="scripts/default.js"></script>
+</body>
+</html>

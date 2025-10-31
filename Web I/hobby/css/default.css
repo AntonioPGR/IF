@@ -1,0 +1,69 @@
+:root {
+  --blue-0: #0a0a1a;
+  --blue-1: #011126;
+  --blue-2: #011C40;
+  --blue-3: #035AA6;
+  --blue-4: #048ABF;
+  --blue-5: #05DBF2;
+  --white-1: #FEFEFE;
+  --gray-1: #252525;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  outline: none;
+  text-decoration: none;
+  list-style: none;
+  border: none;
+}
+
+html {
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+main {
+  flex-grow: 1; 
+}
+
+body.universe_bg {
+  background: radial-gradient(circle at top, #0a0a1a, #000, #0a0a1a);
+  background: radial-gradient(circle at top, #0a0a1a 0%, #000 70%, #0a0a1a 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+
+  header#header, footer#footer {
+    background-color: transparent;
+  }
+}
+
+.page_main{
+  color: var(--white-1);
+  text-align: center;
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.page_title {
+  font-size: 4rem;
+  font-weight: 700;
+}
+
+.page_text {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  max-width: 700px;
+}
