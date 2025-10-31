@@ -41,6 +41,10 @@ body.universe_bg {
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
   header#header, footer#footer {
     background-color: transparent;
@@ -55,6 +59,7 @@ body.universe_bg {
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
+  max-width: 90rem;
 }
 
 .page_title {
@@ -65,5 +70,5 @@ body.universe_bg {
 .page_text {
   font-size: 1.5rem;
   line-height: 1.6;
-  max-width: 700px;
+  text-align: left;
 }

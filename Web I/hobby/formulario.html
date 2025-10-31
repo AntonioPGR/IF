@@ -51,15 +51,19 @@
         <legend>Preferências Astronômicas</legend>
 
         <p>Tipo de conteúdo que você mais gosta:</p>
-        <label><input type="radio" name="tipo" value="artigos" required> Artigos</label>
-        <label><input type="radio" name="tipo" value="videos"> Vídeos</label>
-        <label><input type="radio" name="tipo" value="fotos"> Fotos</label>
+        <div class="row">
+          <label><input type="radio" name="tipo" value="artigos" required> Artigos</label>
+          <label><input type="radio" name="tipo" value="videos"> Vídeos</label>
+          <label><input type="radio" name="tipo" value="fotos"> Fotos</label>
+        </div>
 
         <p>Assuntos de interesse:</p>
-        <label><input type="checkbox" name="interesses" value="planetas"> Planetas</label>
-        <label><input type="checkbox" name="interesses" value="galaxias"> Galáxias</label>
-        <label><input type="checkbox" name="interesses" value="buracos-negros"> Buracos Negros</label>
-        <label><input type="checkbox" name="interesses" value="observacao"> Observação Amadora</label>
+        <div class="row">
+          <label><input type="checkbox" name="interesses" value="planetas"> Planetas</label>
+          <label><input type="checkbox" name="interesses" value="galaxias"> Galáxias</label>
+          <label><input type="checkbox" name="interesses" value="buracos-negros"> Buracos Negros</label>
+          <label><input type="checkbox" name="interesses" value="observacao"> Observação Amadora</label>
+        </div>
 
         <label for="nivel">Nível de conhecimento:</label>
         <select id="nivel" name="nivel" required>
