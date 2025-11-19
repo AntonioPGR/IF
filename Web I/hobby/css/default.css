@@ -33,6 +33,7 @@ body {
 
 main {
   flex-grow: 1; 
+  max-width: 100vw;
 }
 
 body.universe_bg {
@@ -59,7 +60,7 @@ body.universe_bg {
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-  max-width: 90rem;
+  max-width: 100vw;
 }
 
 .page_title {
@@ -67,8 +68,16 @@ body.universe_bg {
   font-weight: 700;
 }
 
+
 .page_text {
   font-size: 1.5rem;
   line-height: 1.6;
   text-align: left;
+  max-width: 60rem;
+}
+
+@media screen and (max-width: 768px) {
+  .page_title{
+    font-size: 3rem;
+  }
 }

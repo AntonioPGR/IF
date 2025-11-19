@@ -2,18 +2,24 @@ main{
 
   article {
     display: flex;
-    flex-direction: row;
+    flex-flow: row;
     max-width: 80rem;
+    width: 100%;
     background-color: var(--blue-1);
     padding: 1rem;
     border-radius: 0.75rem;
     gap: 2rem;
+
+    img {
+      max-width: 100%;
+    }
 
     div{
       display: flex;
       flex-direction: column;
       text-align: left;
       gap: 1rem;
+      width: 100%;
 
       h2 {
         font-size: 2.5rem;
@@ -23,15 +29,22 @@ main{
         color: var(--white-1);
         font-size: 1.25rem;
         text-decoration: underline;
+        max-width: 100%;
+        word-break: break-all;
       }
 
       p {
         font-size: 1.2rem;
         line-height: 1.5;
       }
-
     }
+  }
 
+  @media screen and (max-width: 1130px) {
+    article {
+      flex-direction: column;
+      align-items: center;
+    }
   }
 
 }

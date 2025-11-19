@@ -1,7 +1,7 @@
 main {
   section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, 25rem);
+    display: flex;
+    flex-flow: row wrap;
     gap: 2rem;
     max-width: 79rem;
     width: 100%;
@@ -16,7 +16,7 @@ main {
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      height: 100%;
+      max-width: 25rem;
 
       img {
         width: 100%;
