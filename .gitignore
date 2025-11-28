@@ -56,3 +56,5 @@ dkms.conf
 **/*.sh
 *.ps1
 PE2/projeto/program
+Paradigmas/.idea/misc.xml
+.idea
