@@ -105,6 +105,8 @@ public interface IAlgoritmos{
      */
     public ArrayList<Aresta> caminhoMinimo(IGrafo g, Vertice origem, Vertice destino );
     
+    public ArrayList<Aresta> caminhoMinimo(IGrafo g);
+    
     /**
      * Dado um caminho, esta função calcula o custo do caminho.
      * @param arestas Arestas que compõem o caminho

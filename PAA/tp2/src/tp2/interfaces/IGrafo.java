@@ -36,7 +36,9 @@ public interface IGrafo{
      * da representação computacional do Grafo.
      */
     public void adicionarAresta(Vertice origem, Vertice destino, double peso) throws Exception;
-    
+
+    public Vertice getVertice(int id) throws Exception;
+
     /**
      * Verifica a existência de aresta entre o par origem/destino.
      * @param origem
@@ -76,16 +78,6 @@ public interface IGrafo{
     public ArrayList<Vertice> adjacentesDe(Vertice vertice) throws Exception;
     
     /**
-     * Seta o peso da aresta entre os vértices origem e destino.
-     * @param origem
-     * @param destino
-     * @param peso
-     * @throws java.lang.Exception Uma exceção é lançada quando o(s) vértice(s)
-     * origem e/ou destino não existe(m).
-     */
-    public void setarPeso(Vertice origem, Vertice destino, double peso) throws Exception;
-    
-    /**
      * Retorna uma coleção com as arestas existentes entre origem e destino.
      * @param origem
      * @param destino
@@ -100,5 +92,6 @@ public interface IGrafo{
      */
     public ArrayList<Vertice> vertices();
     
+    public void resetarVertices();
 }
 
